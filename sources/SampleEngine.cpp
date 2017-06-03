@@ -10,7 +10,11 @@ bool	SampleEngine::Initialize()
 	__input = std::unique_ptr<InputWrapper>(new InputWrapper{});
 	__input->Initialize();
 	__graphics = std::unique_ptr<GraphicsWrapper>(new GraphicsWrapper{});
-	//__graphics->Initialize();
+	if (!__graphics->Initialize(lWidth, lHeight, __hwnd))
+	{
+		Uninitialize();
+		return false;
+	}
 
 	return true;
 }
@@ -18,7 +22,7 @@ bool	SampleEngine::Initialize()
 void	SampleEngine::Uninitialize()
 {
 	__input->Uninitialize();
-	//__graphics->Uninitialize();
+	__graphics->Uninitialize();
 	UninitializeWindows();
 }
 
@@ -47,8 +51,8 @@ bool	SampleEngine::Render()
 	if (__input->IsKeyDown(VK_ESCAPE))
 		return false;
 
-//	if (__graphics->Render())
-//		return false;
+	if (!__graphics->Render())
+		return false;
 
 	return true;
 }
