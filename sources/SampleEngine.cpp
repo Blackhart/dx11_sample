@@ -8,7 +8,7 @@ bool	SampleEngine::Initialize()
 	InitializeWindows(lWidth, lHeight);
 
 	__input = std::unique_ptr<InputWrapper>(new InputWrapper{});
-	//__input->Initialize();
+	__input->Initialize();
 	__graphics = std::unique_ptr<GraphicsWrapper>(new GraphicsWrapper{});
 	//__graphics->Initialize();
 
@@ -17,7 +17,7 @@ bool	SampleEngine::Initialize()
 
 void	SampleEngine::Uninitialize()
 {
-	//__input->Uninitialize();
+	__input->Uninitialize();
 	//__graphics->Uninitialize();
 	UninitializeWindows();
 }
@@ -44,8 +44,8 @@ void	SampleEngine::Run()
 
 bool	SampleEngine::Render()
 {
-//	if (__input->IsKeyDown(VK_ESCAPE))
-//		return false;
+	if (__input->IsKeyDown(VK_ESCAPE))
+		return false;
 
 //	if (__graphics->Render())
 //		return false;
@@ -59,13 +59,13 @@ LRESULT CALLBACK SampleEngine::MessageHandler(HWND hwnd, UINT umsg, WPARAM wpara
 	{
 		case WM_KEYDOWN:
 		{
-			//m_Input->KeyDown((unsigned int)wparam);
+			__input->KeyDown((unsigned int)wparam);
 			return 0;
 		}
 
 		case WM_KEYUP:
 		{
-			//m_Input->KeyUp((unsigned int)wparam);
+			__input->KeyUp((unsigned int)wparam);
 			return 0;
 		}
 		default:
