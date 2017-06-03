@@ -1,7 +1,11 @@
-#include <Windows.h>
 #include "../includes/SampleEngine.hpp"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
-	return 0;
+	SampleEngine lEngine;
+	if (!lEngine.Initialize())
+		return false;
+	lEngine.Run();
+	lEngine.Uninitialize();
+	return true;
 }
