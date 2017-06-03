@@ -10,7 +10,7 @@ bool	SampleEngine::Initialize()
 	__input = std::unique_ptr<InputWrapper>(new InputWrapper{});
 	__input->Initialize();
 	__graphics = std::unique_ptr<GraphicsWrapper>(new GraphicsWrapper{});
-	if (!__graphics->Initialize(lWidth, lHeight, __hwnd))
+	if (!__graphics->Initialize(lWidth, lHeight, __hwnd, __windowMode))
 	{
 		Uninitialize();
 		return false;
