@@ -271,20 +271,28 @@ void	D3DWrapper::Uninitialize()
 {
 	if (__swapChain)
 		__swapChain->SetFullscreenState(false, nullptr);
+
 	if (__rasterState)
 		__rasterState->Release();
+
 	if (__depthStencilView)
 		__depthStencilView->Release();
+
 	if (__depthStencilState)
 		__depthStencilState->Release();
+
 	if (__depthStencilBuffer)
 		__depthStencilBuffer->Release();
+
 	if (__renderTargetView)
 		__renderTargetView->Release();
+
 	if (__deviceContext)
 		__deviceContext->Release();
+
 	if (__device)
 		__device->Release();
+
 	if (__swapChain)
 		__swapChain->Release();
 }
