@@ -17,7 +17,7 @@ struct VertOutput
 	float4	color : COLOR;
 };
 
-void	main(in VertInput IN, out VertOutput OUT)
+void	vert(in VertInput IN, out VertOutput OUT)
 {
 	IN.position.w = 1.0f;
 
