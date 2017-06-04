@@ -51,7 +51,7 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint8_t** pIndices)
 	return true;
 }
 
-bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData* pVertices, uint8_t* pIndices)
+bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint8_t const* pIndices)
 {
 	HRESULT	lResult;
 	D3D11_BUFFER_DESC	lVertexBufferDesc;
@@ -60,7 +60,7 @@ bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData* pVertices
 	D3D11_SUBRESOURCE_DATA	lIndexResource;
 
 	lVertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	lVertexBufferDesc.ByteWidth = sizeof(uint8_t) * __vertexCount;
+	lVertexBufferDesc.ByteWidth = sizeof(VertexData) * __vertexCount;
 	lVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	lVertexBufferDesc.CPUAccessFlags = 0;
 	lVertexBufferDesc.MiscFlags = 0;

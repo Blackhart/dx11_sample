@@ -30,7 +30,7 @@ public:
 	uint8_t	GetIndexCount() const;
 private:
 	bool	InitializeVertexData(VertexData** pVertices, uint8_t** pIndices);
-	bool	InitializeBuffers(ID3D11Device* const pDevice, VertexData* pVertices, uint8_t* pIndices);
+	bool	InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint8_t const* pIndices);
 private:
 	ID3D11Buffer*	__vertexBuffer = nullptr;
 	ID3D11Buffer*	__indexBuffer = nullptr;
