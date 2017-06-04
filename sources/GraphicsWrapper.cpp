@@ -9,7 +9,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 {
 	bool	lWNDMode = (pWNDMode == FULL_SCREEN);
 
-	__D3DWrapper = std::unique_ptr<D3DWrapper>(new (std::nothrow) D3DWrapper);
+	__D3DWrapper = std::unique_ptr<D3DInstance>(new (std::nothrow) D3DInstance);
 	if (__D3DWrapper.get() == nullptr)
 		return false;
 	if (!__D3DWrapper->Initialize(pWidth, pHeight, VSYNC_ENABLED, pHWND, lWNDMode, SCREEN_FAR, SCREEN_NEAR))
@@ -21,7 +21,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 	__camera = std::unique_ptr<Camera>(new (std::nothrow) Camera);
 	if (__camera.get() == nullptr)
 		return false;
-	__camera->SetPosition(0.0f, 0.0f, -10.5f);
+	__camera->SetPosition(0.0f, 0.0f, -5.0f);
 
 	__model = std::unique_ptr<Model>(new (std::nothrow) Model);
 	if (__model.get() == nullptr)
@@ -62,7 +62,7 @@ bool	GraphicsWrapper::Render()
 	XMMATRIX	lViewMatrix;
 	XMMATRIX	lProjMatrix;
 
-	__D3DWrapper->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
+	__D3DWrapper->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	__camera->Render();
 

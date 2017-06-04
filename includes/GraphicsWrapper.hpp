@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "D3DWrapper.hpp"
+#include "D3DInstance.hpp"
 #include "../includes/Camera.hpp"
 #include "../includes/Model.hpp"
 #include "../includes/Shader.hpp"
@@ -29,7 +29,7 @@ public:
 	void	Uninitialize();
 	bool	Render();
 private:
-	std::unique_ptr<D3DWrapper>	__D3DWrapper;
+	std::unique_ptr<D3DInstance>	__D3DWrapper;
 	std::unique_ptr<Camera>		__camera;
 	std::unique_ptr<Model>		__model;
 	std::unique_ptr<Shader>		__shader;

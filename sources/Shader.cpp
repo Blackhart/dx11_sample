@@ -1,4 +1,5 @@
 #include "../includes/Shader.hpp"
+#include "../includes/D3DWrapper.hpp"
 
 Shader::Shader() :
 	__vertexShader{ nullptr },
@@ -107,21 +108,7 @@ bool	Shader::InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* co
 
 bool	Shader::InitializeMatrixBuffer(ID3D11Device* const pDevice)
 {
-	HRESULT				lResult;
-	D3D11_BUFFER_DESC	lMatrixBufferDesc;
-
-	lMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	lMatrixBufferDesc.ByteWidth = sizeof(MatrixBuffer);
-	lMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	lMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	lMatrixBufferDesc.MiscFlags = 0;
-	lMatrixBufferDesc.StructureByteStride = 0;
-
-	lResult = pDevice->CreateBuffer(&lMatrixBufferDesc, nullptr, &__matrixBuffer);
-	if (FAILED(lResult))
-		return false;
-
-	return true;
+	return CreateBuffer(pDevice, &__matrixBuffer, sizeof(MatrixBuffer), D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0, nullptr, 0, 0);
 }
 
 void	Shader::Uninitialize()

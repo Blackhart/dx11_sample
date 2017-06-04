@@ -1,4 +1,5 @@
 #include "../includes/Model.hpp"
+#include "../includes/D3DWrapper.hpp"
 
 Model::Model() :
 	__vertexBuffer{ nullptr },
@@ -32,8 +33,8 @@ bool	Model::Initialize(ID3D11Device* const pDevice)
 
 bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 {
-	__vertexCount = 3;
-	__indexCount = 3;
+	__vertexCount = 4;
+	__indexCount = 6;
 
 	*pVertices = new (std::nothrow) VertexData[__vertexCount];
 	if (*pVertices == nullptr)
@@ -47,55 +48,30 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 	}
 
 	(*pVertices)[0].position = XMFLOAT3(-1.0f, -1.0f, 0.0f);
-	(*pVertices)[0].color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	(*pVertices)[1].position = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	(*pVertices)[1].color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	(*pVertices)[2].position = XMFLOAT3(1.0f, -1.0f, 0.0f);
-	(*pVertices)[2].color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	(*pVertices)[0].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	(*pVertices)[1].position = XMFLOAT3(-1.0f, 1.0f, 0.0f);
+	(*pVertices)[1].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	(*pVertices)[2].position = XMFLOAT3(1.0f, 1.0f, 0.0f);
+	(*pVertices)[2].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	(*pVertices)[3].position = XMFLOAT3(1.0f, -1.0f, 0.0f);
+	(*pVertices)[3].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	(*pIndices)[0] = 0;
 	(*pIndices)[1] = 1;
 	(*pIndices)[2] = 2;
+	(*pIndices)[3] = 0;
+	(*pIndices)[4] = 2;
+	(*pIndices)[5] = 3;
 
 	return true;
 }
 
 bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint32_t const* pIndices)
 {
-	HRESULT					lResult;
-	D3D11_BUFFER_DESC		lVertexBufferDesc;
-	D3D11_BUFFER_DESC		lIndexBufferDesc;
-	D3D11_SUBRESOURCE_DATA	lVertexResource;
-	D3D11_SUBRESOURCE_DATA	lIndexResource;
-
-	lVertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	lVertexBufferDesc.ByteWidth = sizeof(VertexData) * __vertexCount;
-	lVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	lVertexBufferDesc.CPUAccessFlags = 0;
-	lVertexBufferDesc.MiscFlags = 0;
-	lVertexBufferDesc.StructureByteStride = 0;
-
-	lVertexResource.pSysMem = pVertices;
-	lVertexResource.SysMemPitch = 0;
-	lVertexResource.SysMemSlicePitch = 0;
-
-	lResult = pDevice->CreateBuffer(&lVertexBufferDesc, &lVertexResource, &__vertexBuffer);
-	if (FAILED(lResult))
+	if (!CreateBuffer(pDevice, &__vertexBuffer, sizeof(VertexData) * __vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, pVertices, 0, 0))
 		return false;
 
-	lIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	lIndexBufferDesc.ByteWidth = sizeof(uint32_t) * __indexCount;
-	lIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	lIndexBufferDesc.CPUAccessFlags = 0;
-	lIndexBufferDesc.MiscFlags = 0;
-	lIndexBufferDesc.StructureByteStride = 0;
-
-	lIndexResource.pSysMem = pIndices;
-	lIndexResource.SysMemPitch = 0;
-	lIndexResource.SysMemSlicePitch = 0;
-
-	lResult = pDevice->CreateBuffer(&lIndexBufferDesc, &lIndexResource, &__indexBuffer);
-	if (FAILED(lResult))
+	if (!CreateBuffer(pDevice, &__indexBuffer, sizeof(uint32_t) * __indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, 0, pIndices, 0, 0))
 		return false;
 
 	return true;

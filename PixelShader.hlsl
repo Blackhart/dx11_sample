@@ -11,5 +11,5 @@ struct fragOutput
 
 void	frag(in fragInput IN, out fragOutput OUT)
 {
-	OUT.color = IN.color;
+	OUT.color = IN.color * 0.5f;
 }
