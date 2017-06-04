@@ -32,7 +32,7 @@ public:
 private:
 	void	OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, HWND const pHWND, WCHAR const* const pShaderFilename);
 	bool	SetShaderParameters(ID3D11DeviceContext* const pDeviceContext, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix);
-	bool	CompileShader(WCHAR const* const pShaderFilename, ID3DBlob** pShaderBuffer, HWND const pHWND);
+	bool	CompileShader(WCHAR const* const pShaderFilename, char const* const pEntryPoint, char const* const pShaderTarget, ID3DBlob** pShaderBuffer, HWND const pHWND);
 	bool	InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* const pVertexShader);
 	bool	InitializeMatrixBuffer(ID3D11Device* const pDevice);
 private:

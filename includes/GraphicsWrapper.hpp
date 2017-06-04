@@ -3,7 +3,12 @@
 
 #include <windows.h>
 #include <cstdint>
+#include <memory>
+
 #include "D3DWrapper.hpp"
+#include "../includes/Camera.hpp"
+#include "../includes/Model.hpp"
+#include "../includes/Shader.hpp"
 
 extern bool const	VSYNC_ENABLED;
 extern float const	SCREEN_FAR;
@@ -24,7 +29,10 @@ public:
 	void	Uninitialize();
 	bool	Render();
 private:
-	D3DWrapper	__D3DWrapper;
+	std::unique_ptr<D3DWrapper>	__D3DWrapper;
+	std::unique_ptr<Camera>		__camera;
+	std::unique_ptr<Model>		__model;
+	std::unique_ptr<Shader>		__shader;
 };
 
 #endif

@@ -12,7 +12,7 @@ Model::Model() :
 bool	Model::Initialize(ID3D11Device* const pDevice)
 {
 	VertexData*	lVertices = nullptr;
-	uint8_t*	lIndices = nullptr;
+	uint32_t*	lIndices = nullptr;
 
 	if (!InitializeVertexData(&lVertices, &lIndices))
 		return false;
@@ -30,7 +30,7 @@ bool	Model::Initialize(ID3D11Device* const pDevice)
 	return true;
 }
 
-bool	Model::InitializeVertexData(VertexData** pVertices, uint8_t** pIndices)
+bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 {
 	__vertexCount = 3;
 	__indexCount = 3;
@@ -39,7 +39,7 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint8_t** pIndices)
 	if (*pVertices == nullptr)
 		return false;
 
-	*pIndices = new (std::nothrow) uint8_t[__indexCount];
+	*pIndices = new (std::nothrow) uint32_t[__indexCount];
 	if (*pIndices == nullptr)
 	{
 		delete[] *pVertices;
@@ -60,7 +60,7 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint8_t** pIndices)
 	return true;
 }
 
-bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint8_t const* pIndices)
+bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint32_t const* pIndices)
 {
 	HRESULT					lResult;
 	D3D11_BUFFER_DESC		lVertexBufferDesc;
@@ -84,7 +84,7 @@ bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVe
 		return false;
 
 	lIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	lIndexBufferDesc.ByteWidth = sizeof(uint8_t) * __indexCount;
+	lIndexBufferDesc.ByteWidth = sizeof(uint32_t) * __indexCount;
 	lIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	lIndexBufferDesc.CPUAccessFlags = 0;
 	lIndexBufferDesc.MiscFlags = 0;
@@ -116,7 +116,7 @@ void	Model::Render(ID3D11DeviceContext* const pDeviceContext)
 	UINT const	lOffset = 0;
 
 	pDeviceContext->IASetVertexBuffers(0, 1, &__vertexBuffer, &lStride, &lOffset);
-	pDeviceContext->IASetIndexBuffer(__indexBuffer, DXGI_FORMAT_R8_UINT, 0);
+	pDeviceContext->IASetIndexBuffer(__indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

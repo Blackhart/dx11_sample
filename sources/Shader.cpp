@@ -16,9 +16,9 @@ bool	Shader::Initialize(ID3D11Device* const pDevice, HWND const pHWND)
 	ID3DBlob*	lPixelShader = nullptr;
 
 	// Compile Vertex + Pixel shaders
-	if (!CompileShader(L"VertexShader.hlsl", &lVertexShader, pHWND))
+	if (!CompileShader(L"VertexShader.hlsl", "vert", "vs_5_0", &lVertexShader, pHWND))
 		return false;
-	if (!CompileShader(L"PixelShader.hlsl", &lPixelShader, pHWND))
+	if (!CompileShader(L"PixelShader.hlsl", "frag", "ps_5_0", &lPixelShader, pHWND))
 	{
 		lVertexShader->Release();
 		return false;
@@ -57,12 +57,12 @@ bool	Shader::Initialize(ID3D11Device* const pDevice, HWND const pHWND)
 	return true;
 }
 
-bool	Shader::CompileShader(WCHAR const* const pShaderFilename, ID3DBlob** pShaderBuffer, HWND const pHWND)
+bool	Shader::CompileShader(WCHAR const* const pShaderFilename, char const* const pEntryPoint, char const* const pShaderTarget, ID3DBlob** pShaderBuffer, HWND const pHWND)
 {
 	HRESULT		lResult;
 	ID3DBlob*	lErrorMsg = nullptr;
 
-	lResult = D3DCompileFromFile(pShaderFilename, nullptr, nullptr, "frag", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, pShaderBuffer, &lErrorMsg);
+	lResult = D3DCompileFromFile(pShaderFilename, nullptr, nullptr, pEntryPoint, pShaderTarget, D3D10_SHADER_ENABLE_STRICTNESS, 0, pShaderBuffer, &lErrorMsg);
 	if (FAILED(lResult))
 	{
 		if (lErrorMsg)
@@ -154,7 +154,7 @@ void	Shader::OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, HWND const pH
 
 bool	Shader::Render(ID3D11DeviceContext* const pDeviceContext, int const pIndexCount, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjectionMatrix)
 {
-	if (SetShaderParameters(pDeviceContext, pWorldMatrix, pViewMatrix, pProjectionMatrix))
+	if (!SetShaderParameters(pDeviceContext, pWorldMatrix, pViewMatrix, pProjectionMatrix))
 		return false;
 
 	pDeviceContext->IASetInputLayout(__inputLayout);
@@ -163,6 +163,8 @@ bool	Shader::Render(ID3D11DeviceContext* const pDeviceContext, int const pIndexC
 	pDeviceContext->PSSetShader(__pixelShader, nullptr, 0);
 
 	pDeviceContext->DrawIndexed(pIndexCount, 0, 0);
+
+	return true;
 }
 
 bool	Shader::SetShaderParameters(ID3D11DeviceContext* const pDeviceContext, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix)
