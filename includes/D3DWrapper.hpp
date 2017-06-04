@@ -18,7 +18,7 @@ using namespace DirectX;
 class D3DWrapper
 {
 public:
-	D3DWrapper() = default;
+	D3DWrapper();
 	D3DWrapper(D3DWrapper const&) = delete;
 	D3DWrapper(D3DWrapper&&) = delete;
 	~D3DWrapper() = default;
@@ -36,7 +36,7 @@ public:
 	void					GetVideoCardInfo(char* pCardName, int& pMemory) const;
 private:
 	bool					GetDeviceInfo(uint16_t const pWidth, uint16_t const pHeight, uint32_t& pFreshRateNum, uint32_t& pFreshRateDenom, uint64_t& pVideoCardNameLength);
-	bool					InitializeDeviceWithSwapChain(uint16_t const pWidth, uint16_t const pHeight, uint32_t lFreshRateNum, uint32_t lFreshRateDenom, HWND const pHWND, bool const pFullScreen);
+	bool					InitializeDeviceWithSwapChain(uint16_t const pWidth, uint16_t const pHeight, uint32_t const lFreshRateNum, uint32_t const lFreshRateDenom, HWND const pHWND, bool const pFullScreen);
 	bool					InitializeRenderTarget();
 	bool					InitializeDepthBuffer(uint16_t const pWidth, uint16_t const pHeight);
 	bool					InitializeRasterizer();
@@ -46,14 +46,14 @@ private:
 	bool						__vsync;
 	int32_t						__videoCardMemory;
 	char						__videoCardDescription[128];
-	IDXGISwapChain*				__swapChain = nullptr;
-	ID3D11Device*				__device = nullptr;
-	ID3D11DeviceContext*		__deviceContext = nullptr;
-	ID3D11RenderTargetView*		__renderTargetView = nullptr;
-	ID3D11Texture2D*			__depthStencilBuffer = nullptr;
-	ID3D11DepthStencilState*	__depthStencilState = nullptr;
-	ID3D11DepthStencilView*		__depthStencilView = nullptr;
-	ID3D11RasterizerState*		__rasterState = nullptr;
+	IDXGISwapChain*				__swapChain;
+	ID3D11Device*				__device;
+	ID3D11DeviceContext*		__deviceContext;
+	ID3D11RenderTargetView*		__renderTargetView;
+	ID3D11Texture2D*			__depthStencilBuffer;
+	ID3D11DepthStencilState*	__depthStencilState;
+	ID3D11DepthStencilView*		__depthStencilView;
+	ID3D11RasterizerState*		__rasterState;
 	XMMATRIX					__projectionMatrix;
 	XMMATRIX					__worldMatrix;
 	XMMATRIX					__orthoMatrix;

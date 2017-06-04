@@ -1,5 +1,14 @@
 #include "../includes/Model.hpp"
 
+Model::Model() :
+	__vertexBuffer{ nullptr },
+	__indexBuffer{ nullptr },
+	__vertexCount{ 0 },
+	__indexCount{ 0 }
+{
+
+}
+
 bool	Model::Initialize(ID3D11Device* const pDevice)
 {
 	VertexData*	lVertices = nullptr;
@@ -53,9 +62,9 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint8_t** pIndices)
 
 bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint8_t const* pIndices)
 {
-	HRESULT	lResult;
-	D3D11_BUFFER_DESC	lVertexBufferDesc;
-	D3D11_BUFFER_DESC	lIndexBufferDesc;
+	HRESULT					lResult;
+	D3D11_BUFFER_DESC		lVertexBufferDesc;
+	D3D11_BUFFER_DESC		lIndexBufferDesc;
 	D3D11_SUBRESOURCE_DATA	lVertexResource;
 	D3D11_SUBRESOURCE_DATA	lIndexResource;
 

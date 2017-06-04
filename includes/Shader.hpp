@@ -20,26 +20,26 @@ private:
 	};
 
 public:
-	Shader() = default;
+	Shader();
 	Shader(Shader const&) = delete;
 	Shader(Shader&&) = delete;
 	~Shader() = default;
 	Shader&	operator=(Shader const&) = delete;
 	Shader&	operator=(Shader&&) = delete;
-	bool	Initialize(ID3D11Device* const pDevice, HWND pHWND);
+	bool	Initialize(ID3D11Device* const pDevice, HWND const pHWND);
 	void	Uninitialize();
-	bool	Render(ID3D11DeviceContext* pDeviceContext, int pIndexCount, XMMATRIX pWorldMatrix, XMMATRIX pViewMatrix, XMMATRIX pProjectionMatrix);
+	bool	Render(ID3D11DeviceContext* const pDeviceContext, int const pIndexCount, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjectionMatrix);
 private:
-	void	OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, HWND pHWND, WCHAR const* const pShaderFilename);
+	void	OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, HWND const pHWND, WCHAR const* const pShaderFilename);
 	bool	SetShaderParameters(ID3D11DeviceContext* const pDeviceContext, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix);
-	bool	CompileShader(WCHAR* const pShaderFilename, ID3DBlob** pShaderBuffer, HWND pHWND);
-	bool	InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* pVertexShader);
+	bool	CompileShader(WCHAR const* const pShaderFilename, ID3DBlob** pShaderBuffer, HWND const pHWND);
+	bool	InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* const pVertexShader);
 	bool	InitializeMatrixBuffer(ID3D11Device* const pDevice);
 private:
-	ID3D11VertexShader*	__vertexShader = nullptr;
-	ID3D11PixelShader*	__pixelShader = nullptr;
-	ID3D11InputLayout*	__inputLayout = nullptr;
-	ID3D11Buffer*		__matrixBuffer = nullptr;
+	ID3D11VertexShader*	__vertexShader;
+	ID3D11PixelShader*	__pixelShader;
+	ID3D11InputLayout*	__inputLayout;
+	ID3D11Buffer*		__matrixBuffer;
 };
 
 #endif

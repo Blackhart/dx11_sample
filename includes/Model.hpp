@@ -18,7 +18,7 @@ private:
 	} VertexData;
 
 public:
-	Model() = default;
+	Model();
 	Model(Model const&) = delete;
 	Model(Model&&) = delete;
 	~Model() = default;
@@ -32,10 +32,10 @@ private:
 	bool	InitializeVertexData(VertexData** pVertices, uint8_t** pIndices);
 	bool	InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint8_t const* pIndices);
 private:
-	ID3D11Buffer*	__vertexBuffer = nullptr;
-	ID3D11Buffer*	__indexBuffer = nullptr;
-	uint8_t		__vertexCount = 0;
-	uint8_t		__indexCount = 0;
+	ID3D11Buffer*	__vertexBuffer;
+	ID3D11Buffer*	__indexBuffer;
+	uint8_t			__vertexCount;
+	uint8_t			__indexCount;
 };
 
 #endif

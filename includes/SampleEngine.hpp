@@ -6,6 +6,7 @@
 #include <windows.h>
 #include <cstdint>
 #include <memory>
+#include <new>
 #include "GraphicsWrapper.hpp"
 #include "InputWrapper.hpp"
 
@@ -28,21 +29,21 @@ public:
 	bool	Initialize();
 	void	Uninitialize();
 	void	Run();
-	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
+	LRESULT CALLBACK MessageHandler(HWND const hwnd, UINT const umsg, WPARAM const wparam, LPARAM const lparam);
 private:
 	bool	Render();
-	void	InitializeWindows(uint16_t&, uint16_t&);
+	void	InitializeWindows(uint16_t& pWidth, uint16_t& pHeight);
 	void	UninitializeWindows();
 private:
-	LPCWSTR				__appName;
-	HINSTANCE			__hinstance;
-	HWND				__hwnd;
+	LPCWSTR								__appName;
+	HINSTANCE							__hinstance;
+	HWND								__hwnd;
 	std::unique_ptr<InputWrapper>		__input;
 	std::unique_ptr<GraphicsWrapper>	__graphics;
-	WindowMode	__windowMode;
+	WindowMode							__windowMode;
 };
 
-static LRESULT	CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+static LRESULT	CALLBACK	WndProc(HWND const hwnd, UINT const umessage, WPARAM const wparam, LPARAM const lparam);
 
 static SampleEngine*	SampleEngineInst = nullptr;
 

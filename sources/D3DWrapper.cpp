@@ -1,5 +1,18 @@
 #include "../includes/D3DWrapper.hpp"
 
+D3DWrapper::D3DWrapper() :
+	__swapChain{ nullptr },
+	__device{ nullptr },
+	__deviceContext{ nullptr },
+	__renderTargetView{ nullptr },
+	__depthStencilBuffer{ nullptr },
+	__depthStencilState{ nullptr },
+	__depthStencilView{ nullptr },
+	__rasterState{ nullptr }
+{
+
+}
+
 bool	D3DWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, bool const pVSync, HWND const pHWND, bool const pFullScreen, float const pScreenFar, float const pScreenNear)
 {
 	uint32_t	lFreshRateNum;
@@ -96,7 +109,7 @@ Quit:
 	return false;
 }
 
-bool	D3DWrapper::InitializeDeviceWithSwapChain(uint16_t const pWidth, uint16_t const pHeight, uint32_t lFreshRateNum, uint32_t lFreshRateDenom, HWND const pHWND, bool const pFullScreen)
+bool	D3DWrapper::InitializeDeviceWithSwapChain(uint16_t const pWidth, uint16_t const pHeight, uint32_t const lFreshRateNum, uint32_t const lFreshRateDenom, HWND const pHWND, bool const pFullScreen)
 {
 	HRESULT					lResult;
 	D3D_FEATURE_LEVEL		lFeatureLvl;
@@ -262,6 +275,7 @@ void	D3DWrapper::InitializeMatrix(uint16_t const pWidth, uint16_t const pHeight,
 
 	lFieldOfView = 3.141592654f / 4.0f;
 	lScreenAspect = (float)pWidth / (float)pHeight;
+
 	__projectionMatrix = XMMatrixPerspectiveFovLH(lFieldOfView, lScreenAspect, pScreenNear, pScreenFar);
 	__worldMatrix = XMMatrixIdentity();
 	__orthoMatrix = XMMatrixOrthographicLH((float)pWidth, (float)pHeight, pScreenNear, pScreenFar);
