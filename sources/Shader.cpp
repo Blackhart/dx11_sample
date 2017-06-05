@@ -78,7 +78,7 @@ bool	Shader::CompileShader(WCHAR const* const pShaderFilename, char const* const
 bool	Shader::InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* const pVertexShader)
 {
 	HRESULT						lResult;
-	D3D11_INPUT_ELEMENT_DESC	lPolygonLayout[2];
+	D3D11_INPUT_ELEMENT_DESC	lPolygonLayout[3];
 	uint32_t					lNumElems = 0;
 
 	lPolygonLayout[0].SemanticName = "POSITION";
@@ -96,6 +96,14 @@ bool	Shader::InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* co
 	lPolygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	lPolygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	lPolygonLayout[1].InstanceDataStepRate = 0;
+
+	lPolygonLayout[2].SemanticName = "NORMAL";
+	lPolygonLayout[2].SemanticIndex = 0;
+	lPolygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	lPolygonLayout[2].InputSlot = 0;
+	lPolygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	lPolygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	lPolygonLayout[2].InstanceDataStepRate = 0;
 
 	lNumElems = sizeof(lPolygonLayout) / sizeof(lPolygonLayout[0]);
 

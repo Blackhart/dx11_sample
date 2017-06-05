@@ -21,7 +21,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 	__camera = std::unique_ptr<Camera>(new (std::nothrow) Camera);
 	if (__camera.get() == nullptr)
 		return false;
-	__camera->SetPosition(0.0f, 0.0f, -5.0f);
+	__camera->SetPosition(0.0f, 0.0f, 5.0f);
 
 	__model = std::unique_ptr<Model>(new (std::nothrow) Model);
 	if (__model.get() == nullptr)

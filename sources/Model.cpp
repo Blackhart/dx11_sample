@@ -38,7 +38,7 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 	std::vector<tinyobj::shape_t>	lShapes;
 	std::string						lError;
 
-	if (!tinyobj::LoadObj(&lAttrib, &lShapes, nullptr, &lError, "sportsCar.obj", nullptr, true))
+	if (!tinyobj::LoadObj(&lAttrib, &lShapes, nullptr, &lError, "cars.obj", nullptr, true))
 		return false;
 
 	__vertexCount = lAttrib.vertices.size() / 3;
@@ -62,6 +62,7 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 	{
 		(*pVertices)[lArrayElem].position = XMFLOAT3(lAttrib.vertices[i], lAttrib.vertices[i+1], lAttrib.vertices[i+2]);
 		(*pVertices)[lArrayElem].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		(*pVertices)[lArrayElem].normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	}
 
 	lArrayElem = 0;
@@ -70,7 +71,11 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 	{
 		for (size_t f = 0; f < lShapes[s].mesh.indices.size(); ++f, ++lArrayElem)
 		{
-			(*pIndices)[lArrayElem] = lShapes[s].mesh.indices[f].vertex_index;
+			tinyobj::index_t idx = lShapes[s].mesh.indices[f];
+			(*pIndices)[lArrayElem] = idx.vertex_index;
+			(*pVertices)[idx.vertex_index].normal.x += lAttrib.normals[3 * idx.normal_index + 0];
+			(*pVertices)[idx.vertex_index].normal.y += lAttrib.normals[3 * idx.normal_index + 1];
+			(*pVertices)[idx.vertex_index].normal.z += lAttrib.normals[3 * idx.normal_index + 2];
 		}
 	}
 

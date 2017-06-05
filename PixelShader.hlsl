@@ -2,6 +2,7 @@ struct fragInput
 {
 	float4	position : SV_POSITION;
 	float4	color : COLOR;
+	float3	normal : NORMAL;
 };
 
 struct fragOutput
@@ -11,5 +12,6 @@ struct fragOutput
 
 void	frag(in fragInput IN, out fragOutput OUT)
 {
-	OUT.color = IN.color * 0.5f;
+	OUT.color = float4(IN.normal.x, IN.normal.y, IN.normal.z, 1.0f);
+	//OUT.color = IN.color;
 }

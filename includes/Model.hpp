@@ -15,6 +15,7 @@ private:
 	{
 		XMFLOAT3 position;
 		XMFLOAT4 color;
+		XMFLOAT3 normal;
 	} VertexData;
 
 public:

@@ -48,7 +48,7 @@ void	Camera::Render()
 
 	lPositionSIMDVector = XMLoadFloat3(&__position);
 
-	lLookAt.x = 0.0f; lLookAt.y = 0.0f; lLookAt.z = 1.0f;
+	lLookAt.x = 0.0f; lLookAt.y = 0.0f; lLookAt.z = -1.0f;
 	lLookAtSIMDVector = XMLoadFloat3(&lLookAt);
 
 	lYaw = __rotation.x * DEG_TO_RAD;
