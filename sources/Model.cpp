@@ -1,5 +1,6 @@
 #include "../includes/Model.hpp"
 #include "../includes/D3DWrapper.hpp"
+#include "../includes/tiny_obj_loader.h"
 
 Model::Model() :
 	__vertexBuffer{ nullptr },
@@ -33,8 +34,16 @@ bool	Model::Initialize(ID3D11Device* const pDevice)
 
 bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 {
-	__vertexCount = 4;
-	__indexCount = 6;
+	tinyobj::attrib_t				lAttrib;
+	std::vector<tinyobj::shape_t>	lShapes;
+	std::string						lError;
+
+	if (!tinyobj::LoadObj(&lAttrib, &lShapes, nullptr, &lError, "sportsCar.obj", nullptr, true))
+		return false;
+
+	__vertexCount = lAttrib.vertices.size() / 3;
+	for (uint32_t s = 0; s < lShapes.size(); ++s)
+		__indexCount += lShapes[s].mesh.indices.size();
 
 	*pVertices = new (std::nothrow) VertexData[__vertexCount];
 	if (*pVertices == nullptr)
@@ -47,21 +56,23 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 		return false;
 	}
 
-	(*pVertices)[0].position = XMFLOAT3(-1.0f, -1.0f, 0.0f);
-	(*pVertices)[0].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	(*pVertices)[1].position = XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	(*pVertices)[1].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	(*pVertices)[2].position = XMFLOAT3(1.0f, 1.0f, 0.0f);
-	(*pVertices)[2].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	(*pVertices)[3].position = XMFLOAT3(1.0f, -1.0f, 0.0f);
-	(*pVertices)[3].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	uint32_t lArrayElem = 0;
 
-	(*pIndices)[0] = 0;
-	(*pIndices)[1] = 1;
-	(*pIndices)[2] = 2;
-	(*pIndices)[3] = 0;
-	(*pIndices)[4] = 2;
-	(*pIndices)[5] = 3;
+	for (uint32_t i = 0; i < lAttrib.vertices.size(); i += 3, ++lArrayElem)
+	{
+		(*pVertices)[lArrayElem].position = XMFLOAT3(lAttrib.vertices[i], lAttrib.vertices[i+1], lAttrib.vertices[i+2]);
+		(*pVertices)[lArrayElem].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+
+	lArrayElem = 0;
+
+	for (size_t s = 0; s < lShapes.size(); s++)
+	{
+		for (size_t f = 0; f < lShapes[s].mesh.indices.size(); ++f, ++lArrayElem)
+		{
+			(*pIndices)[lArrayElem] = lShapes[s].mesh.indices[f].vertex_index;
+		}
+	}
 
 	return true;
 }
@@ -97,7 +108,7 @@ void	Model::Render(ID3D11DeviceContext* const pDeviceContext)
 	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-uint8_t	Model::GetIndexCount() const
+uint32_t	Model::GetIndexCount() const
 {
 	return __indexCount;
 }

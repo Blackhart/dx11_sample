@@ -27,15 +27,15 @@ public:
 	bool	Initialize(ID3D11Device* const pDevice);
 	void	Uninitialize();
 	void	Render(ID3D11DeviceContext* const pDeviceContext);
-	uint8_t	GetIndexCount() const;
+	uint32_t	GetIndexCount() const;
 private:
 	bool	InitializeVertexData(VertexData** pVertices, uint32_t** pIndices);
 	bool	InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint32_t const* pIndices);
 private:
 	ID3D11Buffer*	__vertexBuffer;
 	ID3D11Buffer*	__indexBuffer;
-	uint8_t			__vertexCount;
-	uint8_t			__indexCount;
+	uint32_t		__vertexCount;
+	uint32_t		__indexCount;
 };
 
 #endif

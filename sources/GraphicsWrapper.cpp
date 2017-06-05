@@ -9,10 +9,10 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 {
 	bool	lWNDMode = (pWNDMode == FULL_SCREEN);
 
-	__D3DWrapper = std::unique_ptr<D3DInstance>(new (std::nothrow) D3DInstance);
-	if (__D3DWrapper.get() == nullptr)
+	__D3DInstance = std::unique_ptr<D3DInstance>(new (std::nothrow) D3DInstance);
+	if (__D3DInstance.get() == nullptr)
 		return false;
-	if (!__D3DWrapper->Initialize(pWidth, pHeight, VSYNC_ENABLED, pHWND, lWNDMode, SCREEN_FAR, SCREEN_NEAR))
+	if (!__D3DInstance->Initialize(pWidth, pHeight, VSYNC_ENABLED, pHWND, lWNDMode, SCREEN_FAR, SCREEN_NEAR))
 	{
 		MessageBox(pHWND, L"Could not initialize Direct3D", L"Error", MB_OK);
 		return false;
@@ -26,7 +26,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 	__model = std::unique_ptr<Model>(new (std::nothrow) Model);
 	if (__model.get() == nullptr)
 		return false;
-	if (!__model->Initialize(__D3DWrapper->GetDevice()))
+	if (!__model->Initialize(__D3DInstance->GetDevice()))
 	{
 		MessageBox(pHWND, L"Could not initialize Model", L"Error", MB_OK);
 		return false;
@@ -35,7 +35,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 	__shader = std::unique_ptr<Shader>(new (std::nothrow) Shader);
 	if (__shader.get() == nullptr)
 		return false;
-	if (!__shader->Initialize(__D3DWrapper->GetDevice(), pHWND))
+	if (!__shader->Initialize(__D3DInstance->GetDevice(), pHWND))
 	{
 		MessageBox(pHWND, L"Could not initialize Shader", L"Error", MB_OK);
 		return false;
@@ -52,8 +52,8 @@ void	GraphicsWrapper::Uninitialize()
 	if (__shader.get() != nullptr)
 		__shader->Uninitialize();
 
-	if (__D3DWrapper.get() != nullptr)
-		__D3DWrapper->Uninitialize();
+	if (__D3DInstance.get() != nullptr)
+		__D3DInstance->Uninitialize();
 }
 
 bool	GraphicsWrapper::Render()
@@ -62,20 +62,20 @@ bool	GraphicsWrapper::Render()
 	XMMATRIX	lViewMatrix;
 	XMMATRIX	lProjMatrix;
 
-	__D3DWrapper->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	__D3DInstance->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	__camera->Render();
 
-	__D3DWrapper->GetWorldMatrix(lWorldMatrix);
+	__D3DInstance->GetWorldMatrix(lWorldMatrix);
 	__camera->GetViewMatrix(lViewMatrix);
-	__D3DWrapper->GetProjectionMatrix(lProjMatrix);
+	__D3DInstance->GetProjectionMatrix(lProjMatrix);
 
-	__model->Render(__D3DWrapper->GetDeviceContext());
+	__model->Render(__D3DInstance->GetDeviceContext());
 
-	if (!__shader->Render(__D3DWrapper->GetDeviceContext(), __model->GetIndexCount(), lWorldMatrix, lViewMatrix, lProjMatrix))
+	if (!__shader->Render(__D3DInstance->GetDeviceContext(), __model->GetIndexCount(), lWorldMatrix, lViewMatrix, lProjMatrix))
 		return false;
 
-	__D3DWrapper->EndScene();
+	__D3DInstance->EndScene();
 
 	return true;
 }

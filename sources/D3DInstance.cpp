@@ -230,6 +230,8 @@ bool	D3DInstance::InitializeDepthBuffer(uint16_t const pWidth, uint16_t const pH
 		return false;
 
 	__deviceContext->OMSetRenderTargets(1, &__renderTargetView, __depthStencilView);
+
+	return true;
 }
 
 bool	D3DInstance::InitializeRasterizer()
@@ -252,6 +254,8 @@ bool	D3DInstance::InitializeRasterizer()
 		return false;
 
 	__deviceContext->RSSetState(__rasterState);
+
+	return true;
 }
 
 void	D3DInstance::InitializeViewport(uint16_t const pWidth, uint16_t const pHeight)

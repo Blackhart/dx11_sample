@@ -29,7 +29,7 @@ public:
 	void	Uninitialize();
 	bool	Render();
 private:
-	std::unique_ptr<D3DInstance>	__D3DWrapper;
+	std::unique_ptr<D3DInstance>	__D3DInstance;
 	std::unique_ptr<Camera>		__camera;
 	std::unique_ptr<Model>		__model;
 	std::unique_ptr<Shader>		__shader;
