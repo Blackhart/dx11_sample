@@ -1,8 +1,8 @@
-#include "../includes/Model.hpp"
+#include "../includes/Geometry.hpp"
 #include "../includes/D3DWrapper.hpp"
 #include "../includes/tiny_obj_loader.h"
 
-Model::Model() :
+Geometry::Geometry() :
 	__vertexBuffer{ nullptr },
 	__indexBuffer{ nullptr },
 	__vertexCount{ 0 },
@@ -11,7 +11,7 @@ Model::Model() :
 
 }
 
-bool	Model::Initialize(ID3D11Device* const pDevice)
+bool	Geometry::Initialize(ID3D11Device* const pDevice)
 {
 	VertexData*	lVertices = nullptr;
 	uint32_t*	lIndices = nullptr;
@@ -32,7 +32,7 @@ bool	Model::Initialize(ID3D11Device* const pDevice)
 	return true;
 }
 
-bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
+bool	Geometry::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 {
 	tinyobj::attrib_t				lAttrib;
 	std::vector<tinyobj::shape_t>	lShapes;
@@ -82,7 +82,7 @@ bool	Model::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 	return true;
 }
 
-bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint32_t const* pIndices)
+bool	Geometry::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint32_t const* pIndices)
 {
 	if (!CreateBuffer(pDevice, &__vertexBuffer, sizeof(VertexData) * __vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, pVertices, 0, 0))
 		return false;
@@ -93,7 +93,7 @@ bool	Model::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVe
 	return true;
 }
 
-void	Model::Uninitialize()
+void	Geometry::Uninitialize()
 {
 	if (__vertexBuffer)
 		__vertexBuffer->Release();
@@ -102,18 +102,37 @@ void	Model::Uninitialize()
 		__indexBuffer->Release();
 }
 
-void	Model::Render(ID3D11DeviceContext* const pDeviceContext)
-{
-	UINT const	lStride = (UINT)sizeof(VertexData);
-	UINT const	lOffset = 0;
-
-	pDeviceContext->IASetVertexBuffers(0, 1, &__vertexBuffer, &lStride, &lOffset);
-	pDeviceContext->IASetIndexBuffer(__indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-uint32_t	Model::GetIndexCount() const
+uint32_t	Geometry::GetIndexCount() const
 {
 	return __indexCount;
+}
+
+uint32_t	Geometry::GetVertexCount() const
+{
+	return __vertexCount;
+}
+
+ID3D11Buffer const* const	Geometry::GetConstVertexBuffer() const
+{
+	return __vertexBuffer;
+}
+
+ID3D11Buffer const* const	Geometry::GetConstIndexBuffer() const
+{
+	return __indexBuffer;
+}
+
+ID3D11Buffer* const	Geometry::GetVertexBuffer() const
+{
+	return __vertexBuffer;
+}
+
+ID3D11Buffer* const	Geometry::GetIndexBuffer() const
+{
+	return __indexBuffer;
+}
+
+uint32_t	Geometry::GetBufferSize() const
+{
+	return sizeof(VertexData);
 }
