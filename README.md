@@ -1,5 +1,6 @@
 ## To do list:
 
+- Architecture refactoring
 - Add CMake in order to generate project solutions
 - Serialization of the loaded model
 - Add support for texture mapping
