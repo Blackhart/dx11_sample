@@ -21,7 +21,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 	__camera = std::unique_ptr<Camera>(new (std::nothrow) Camera);
 	if (__camera.get() == nullptr)
 		return false;
-	__camera->SetPosition(0.0f, 0.0f, 5.0f);
+	__camera->SetPosition(0.0f, 1.0f, 5.0f);
 
 	__model = std::unique_ptr<Geometry>(new (std::nothrow) Geometry);
 	if (__model.get() == nullptr)
@@ -70,9 +70,11 @@ bool	GraphicsWrapper::Render()
 	__camera->GetViewMatrix(lViewMatrix);
 	__D3DInstance->GetProjectionMatrix(lProjMatrix);
 
-	ID3D11Buffer* const lVertexBuffer = __model->GetVertexBuffer();
-	ID3D11Buffer* const lIndexBuffer = __model->GetIndexBuffer();
-	UINT lBufferSize = __model->GetBufferSize();
+	Mesh lsp(__model.get(), __shader.get());
+
+	ID3D11Buffer* const lVertexBuffer = lsp.GetGeometry()->GetVertexBuffer();
+	ID3D11Buffer* const lIndexBuffer = lsp.GetGeometry()->GetIndexBuffer();
+	UINT lBufferSize = lsp.GetGeometry()->GetBufferSize();
 	UINT lOffset = 0;
 	__D3DInstance->GetDeviceContext()->IASetVertexBuffers(0, 1, &lVertexBuffer, &lBufferSize, &lOffset);
 	__D3DInstance->GetDeviceContext()->IASetIndexBuffer(lIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
