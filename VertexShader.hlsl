@@ -14,16 +14,25 @@ struct VertInput
 
 struct VertOutput
 {
-	float4	position : SV_POSITION;
-	float4	color : COLOR;
-	float3	normal : NORMAL;
+	float4	ClipPosition : SV_POSITION;
+	float3	WorldNormal : NORMAL;
+	float3	WorldLightDir : TEXCOORD0;
+	float3	WorldViewDir : TEXCOORD1;
 };
 
-void	vert(in VertInput IN, out VertOutput OUT)
+void	vert(in VertInput pIN, out VertOutput pOUT)
 {
-	IN.position.w = 1.0f;
-
-	OUT.position = mul(mul(mul(IN.position, worldMatrix), viewMatrix), projectionMatrix);
-	OUT.color = IN.color;
-	OUT.normal = normalize(mul(IN.normal, worldMatrix));
+	// ~~~~~ Data ~~~~~
+	
+	pIN.position.w = 1.0f;
+	
+	pOUT.WorldNormal =  normalize(mul(pIN.normal, worldMatrix));
+	float3 lWorldPos = mul(pIN.position, worldMatrix);
+	float3 lWorldCameraPos = float3(0.0f, 1.0f, 5.0f);
+	pOUT.WorldViewDir = lWorldCameraPos - lWorldPos;
+	pOUT.WorldLightDir = normalize(float3(0.0f, 1.0f, 0.0f));
+	
+	// ~~~~~ OUTPUT ~~~~~
+	
+	pOUT.ClipPosition = mul(mul(mul(pIN.position, worldMatrix), viewMatrix), projectionMatrix);
 }
