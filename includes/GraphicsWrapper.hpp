@@ -7,9 +7,9 @@
 
 #include "D3DInstance.hpp"
 #include "../includes/Camera.hpp"
-#include "../includes/Geometry.hpp"
-#include "../includes/Shader.hpp"
 #include "../includes/Mesh.hpp"
+#include "../includes/Material.hpp"
+#include "../includes/SceneObject.hpp"
 
 extern bool const	VSYNC_ENABLED;
 extern float const	SCREEN_FAR;
@@ -32,8 +32,8 @@ public:
 private:
 	std::unique_ptr<D3DInstance>	__D3DInstance;
 	std::unique_ptr<Camera>			__camera;
-	std::unique_ptr<Geometry>		__model;
-	std::unique_ptr<Shader>			__shader;
+	std::unique_ptr<Mesh>			__mesh;
+	std::unique_ptr<Material>		__material;
 };
 
 #endif

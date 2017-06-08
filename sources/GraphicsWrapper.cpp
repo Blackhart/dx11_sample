@@ -23,19 +23,19 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 		return false;
 	__camera->SetPosition(0.0f, 1.0f, 5.0f);
 
-	__model = std::unique_ptr<Geometry>(new (std::nothrow) Geometry);
-	if (__model.get() == nullptr)
+	__mesh = std::unique_ptr<Mesh>(new (std::nothrow) Mesh);
+	if (__mesh.get() == nullptr)
 		return false;
-	if (!__model->Initialize(__D3DInstance->GetDevice()))
+	if (!__mesh->Initialize(__D3DInstance->GetDevice()))
 	{
 		MessageBox(pHWND, L"Could not initialize Model", L"Error", MB_OK);
 		return false;
 	}
 
-	__shader = std::unique_ptr<Shader>(new (std::nothrow) Shader);
-	if (__shader.get() == nullptr)
+	__material = std::unique_ptr<Material>(new (std::nothrow) Material);
+	if (__material.get() == nullptr)
 		return false;
-	if (!__shader->Initialize(__D3DInstance->GetDevice(), pHWND))
+	if (!__material->Initialize(__D3DInstance->GetDevice(), pHWND))
 	{
 		MessageBox(pHWND, L"Could not initialize Shader", L"Error", MB_OK);
 		return false;
@@ -46,11 +46,11 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 
 void	GraphicsWrapper::Uninitialize()
 {
-	if (__model.get() != nullptr)
-		__model->Uninitialize();
+	if (__mesh.get() != nullptr)
+		__mesh->Uninitialize();
 
-	if (__shader.get() != nullptr)
-		__shader->Uninitialize();
+	if (__material.get() != nullptr)
+		__material->Uninitialize();
 
 	if (__D3DInstance.get() != nullptr)
 		__D3DInstance->Uninitialize();
@@ -70,18 +70,11 @@ bool	GraphicsWrapper::Render()
 	__camera->GetViewMatrix(lViewMatrix);
 	__D3DInstance->GetProjectionMatrix(lProjMatrix);
 
-	Mesh lsp(__model.get(), __shader.get());
+	SceneObject lsp(__mesh.get(), __material.get());
 
-	ID3D11Buffer* const lVertexBuffer = lsp.GetGeometry()->GetVertexBuffer();
-	ID3D11Buffer* const lIndexBuffer = lsp.GetGeometry()->GetIndexBuffer();
-	UINT lBufferSize = lsp.GetGeometry()->GetBufferSize();
-	UINT lOffset = 0;
-	__D3DInstance->GetDeviceContext()->IASetVertexBuffers(0, 1, &lVertexBuffer, &lBufferSize, &lOffset);
-	__D3DInstance->GetDeviceContext()->IASetIndexBuffer(lIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	__mesh->SentToGPU(__D3DInstance->GetDeviceContext());
 
-	__D3DInstance->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	if (!__shader->Render(__D3DInstance->GetDeviceContext(), __model->GetIndexCount(), lWorldMatrix, lViewMatrix, lProjMatrix))
+	if (!__material->SentToGPU(__D3DInstance->GetDeviceContext(), __mesh->GetIndexCount(), lWorldMatrix, lViewMatrix, lProjMatrix))
 		return false;
 
 	__D3DInstance->EndScene();

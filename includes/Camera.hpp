@@ -14,8 +14,8 @@ public:
 	Camera(Camera const&) = delete;
 	Camera(Camera&&) = delete;
 	~Camera() = default;
-	Camera&	operator=(Camera const&) = delete;
-	Camera&	operator=(Camera&&) = delete;
+	Camera&		operator=(Camera const&) = delete;
+	Camera&		operator=(Camera&&) = delete;
 	void		SetPosition(float const x, float const y, float const z);
 	void		SetRotation(float const x, float const y, float const z);
 	XMFLOAT3	GetPosition() const;

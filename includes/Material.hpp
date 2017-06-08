@@ -9,7 +9,7 @@
 
 using namespace DirectX;
 
-class Shader
+class Material
 {
 private:
 	struct MatrixBuffer
@@ -20,18 +20,18 @@ private:
 	};
 
 public:
-	Shader();
-	Shader(Shader const&) = delete;
-	Shader(Shader&&) = delete;
-	~Shader() = default;
-	Shader&	operator=(Shader const&) = delete;
-	Shader&	operator=(Shader&&) = delete;
+	Material();
+	Material(Material const&) = delete;
+	Material(Material&&) = delete;
+	~Material() = default;
+	Material&	operator=(Material const&) = delete;
+	Material&	operator=(Material&&) = delete;
 	bool	Initialize(ID3D11Device* const pDevice, HWND const pHWND);
 	void	Uninitialize();
-	bool	Render(ID3D11DeviceContext* const pDeviceContext, uint32_t const pIndexCount, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjectionMatrix);
+	bool	SentToGPU(ID3D11DeviceContext* const pDeviceContext, uint32_t const pIndexCount, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjectionMatrix);
 private:
+	bool	SetMatrixParameters(ID3D11DeviceContext* const pDeviceContext, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix);
 	void	OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, HWND const pHWND, WCHAR const* const pShaderFilename);
-	bool	SetShaderParameters(ID3D11DeviceContext* const pDeviceContext, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix);
 	bool	CompileShader(WCHAR const* const pShaderFilename, char const* const pEntryPoint, char const* const pShaderTarget, ID3DBlob** pShaderBuffer, HWND const pHWND);
 	bool	InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* const pVertexShader);
 	bool	InitializeMatrixBuffer(ID3D11Device* const pDevice);

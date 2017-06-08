@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <stdexcept>
 
-#include "Mesh.hpp"
+#include "SceneObject.hpp"
 
 class Scene
 {
@@ -14,13 +14,13 @@ public:
 	Scene(Scene const&) = delete;
 	Scene(Scene&&) = delete;
 	~Scene() = default;
-	Scene&		operator=(Scene const&) = delete;
-	Scene&		operator=(Scene&&) = delete;
-	void		AddObject(Mesh* const pMesh);
-	Mesh* const	GetObjectAt(uint32_t pIndex) const;
-	uint32_t	GetObjectCount() const;
+	Scene&				operator=(Scene const&) = delete;
+	Scene&				operator=(Scene&&) = delete;
+	void				AddObject(SceneObject* const pMesh);
+	SceneObject* const	GetObjectAt(uint32_t pIndex) const;
+	uint32_t			GetObjectCount() const;
 private:
-	std::vector<Mesh*>	__objects;
+	std::vector<SceneObject*>	__objects;
 };
 
 #endif
