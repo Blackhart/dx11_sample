@@ -1,6 +1,5 @@
 ## To do list:
 
-- Add CMake in order to generate project solutions
 - Serialization of the loaded model
 - Add support for texture mapping
 - Generate pbr materials
