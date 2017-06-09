@@ -1,5 +1,5 @@
-#ifndef __D3D_INSTANCE_HPP__
-#define __D3D_INSTANCE_HPP__
+#ifndef __D3D_FUNCTIONALITIES_HPP__
+#define __D3D_FUNCTIONALITIES_HPP__
 
 // Direct3D functionalities for setting up and drawing 3D graphics 
 #pragma comment(lib, "d3d11.lib")
@@ -17,15 +17,15 @@ using namespace DirectX;
 
 // ~~~~~ Dcl(PUBLIC) ~~~~~
 
-class D3DInstance
+class D3DDevice
 {
 public:
-	D3DInstance();
-	D3DInstance(D3DInstance const&) = delete;
-	D3DInstance(D3DInstance&&) = delete;
-	~D3DInstance() = default;
-	D3DInstance&	operator=(D3DInstance const&) = delete;
-	D3DInstance&	operator=(D3DInstance&&) = delete;
+	D3DDevice();
+	D3DDevice(D3DDevice const&) = delete;
+	D3DDevice(D3DDevice&&) = delete;
+	~D3DDevice() = default;
+	D3DDevice&	operator=(D3DDevice const&) = delete;
+	D3DDevice&	operator=(D3DDevice&&) = delete;
 	bool					Initialize(uint16_t const pWidth, uint16_t const pHeight, bool const pVSync, HWND const pHWND, bool const pFullScreen, float const pScreenFar, float const pScreenNear);
 	void					Uninitialize();
 	void					BeginScene(float const pRed, float const pGreen, float const pBlue, float const pAlpha);
@@ -60,5 +60,9 @@ private:
 	XMMATRIX					__worldMatrix;
 	XMMATRIX					__orthoMatrix;
 };
+
+extern D3DDevice*	D3DInst;
+
+extern bool	CreateBuffer(ID3D11Buffer** pBuffer, UINT const pBytesWidth, D3D11_USAGE const pUsage, UINT const pBindFlags, UINT const pCPUAccessFlags, UINT const pMiscFlags, UINT const pStructueBytesStride, void const* pData, UINT const pDataMemPitch, UINT const pDataMemSlicePitch);
 
 #endif

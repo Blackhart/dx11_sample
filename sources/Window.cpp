@@ -1,5 +1,7 @@
 #include "../includes/Window.hpp"
 
+Window*	WindowInst = nullptr;
+
 Window::Window() :
 	__windowWidth{ 0 },
 	__windowHeight{ 0 }
@@ -9,12 +11,11 @@ Window::Window() :
 
 bool	Window::Initialize()
 {
+	InitializeWindows();
+
 	__input = std::unique_ptr<InputWrapper>(new (std::nothrow) InputWrapper{});
 	if (__input.get() == nullptr)
 		return false;
-
-	InitializeWindows();
-
 	__input->Initialize();
 
 	return true;

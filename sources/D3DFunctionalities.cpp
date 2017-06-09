@@ -1,6 +1,8 @@
-#include "../includes/D3DInstance.hpp"
+#include "../includes/D3DFunctionalities.hpp"
 
-D3DInstance::D3DInstance() :
+D3DDevice*	D3DInst = nullptr;
+
+D3DDevice::D3DDevice() :
 	__swapChain{ nullptr },
 	__device{ nullptr },
 	__deviceContext{ nullptr },
@@ -10,10 +12,10 @@ D3DInstance::D3DInstance() :
 	__depthStencilView{ nullptr },
 	__rasterState{ nullptr }
 {
-
+	D3DInst = this;
 }
 
-bool	D3DInstance::Initialize(uint16_t const pWidth, uint16_t const pHeight, bool const pVSync, HWND const pHWND, bool const pFullScreen, float const pScreenFar, float const pScreenNear)
+bool	D3DDevice::Initialize(uint16_t const pWidth, uint16_t const pHeight, bool const pVSync, HWND const pHWND, bool const pFullScreen, float const pScreenFar, float const pScreenNear)
 {
 	uint32_t	lFreshRateNum;
 	uint32_t	lFreshRateDenom;
@@ -43,7 +45,7 @@ bool	D3DInstance::Initialize(uint16_t const pWidth, uint16_t const pHeight, bool
 	return true;
 }
 
-bool	D3DInstance::GetDeviceInfo(uint16_t const pWidth, uint16_t const pHeight, uint32_t& pFreshRateNum, uint32_t& pFreshRateDenom, uint64_t& pVideoCardNameLength)
+bool	D3DDevice::GetDeviceInfo(uint16_t const pWidth, uint16_t const pHeight, uint32_t& pFreshRateNum, uint32_t& pFreshRateDenom, uint64_t& pVideoCardNameLength)
 {
 	HRESULT				lResult;
 	IDXGIFactory*		lpFactory;
@@ -109,7 +111,7 @@ Quit:
 	return false;
 }
 
-bool	D3DInstance::InitializeDeviceWithSwapChain(uint16_t const pWidth, uint16_t const pHeight, uint32_t const lFreshRateNum, uint32_t const lFreshRateDenom, HWND const pHWND, bool const pFullScreen)
+bool	D3DDevice::InitializeDeviceWithSwapChain(uint16_t const pWidth, uint16_t const pHeight, uint32_t const lFreshRateNum, uint32_t const lFreshRateDenom, HWND const pHWND, bool const pFullScreen)
 {
 	HRESULT					lResult;
 	D3D_FEATURE_LEVEL		lFeatureLvl;
@@ -152,7 +154,7 @@ bool	D3DInstance::InitializeDeviceWithSwapChain(uint16_t const pWidth, uint16_t 
 	return true;
 }
 
-bool	D3DInstance::InitializeRenderTarget()
+bool	D3DDevice::InitializeRenderTarget()
 {
 	HRESULT				lResult;
 	ID3D11Texture2D*	lpBackBuffer;
@@ -177,7 +179,7 @@ Quit:
 	return false;
 }
 
-bool	D3DInstance::InitializeDepthBuffer(uint16_t const pWidth, uint16_t const pHeight)
+bool	D3DDevice::InitializeDepthBuffer(uint16_t const pWidth, uint16_t const pHeight)
 {
 	HRESULT							lResult;
 	D3D11_TEXTURE2D_DESC			lDepthBufferDesc;
@@ -234,7 +236,7 @@ bool	D3DInstance::InitializeDepthBuffer(uint16_t const pWidth, uint16_t const pH
 	return true;
 }
 
-bool	D3DInstance::InitializeRasterizer()
+bool	D3DDevice::InitializeRasterizer()
 {
 	HRESULT					lResult;
 	D3D11_RASTERIZER_DESC	lRasterDesc;
@@ -258,7 +260,7 @@ bool	D3DInstance::InitializeRasterizer()
 	return true;
 }
 
-void	D3DInstance::InitializeViewport(uint16_t const pWidth, uint16_t const pHeight)
+void	D3DDevice::InitializeViewport(uint16_t const pWidth, uint16_t const pHeight)
 {
 	D3D11_VIEWPORT	lViewport;
 
@@ -272,7 +274,7 @@ void	D3DInstance::InitializeViewport(uint16_t const pWidth, uint16_t const pHeig
 	__deviceContext->RSSetViewports(1, &lViewport);
 }
 
-void	D3DInstance::InitializeMatrix(uint16_t const pWidth, uint16_t const pHeight, float const pScreenFar, float const pScreenNear)
+void	D3DDevice::InitializeMatrix(uint16_t const pWidth, uint16_t const pHeight, float const pScreenFar, float const pScreenNear)
 {
 	float	lFieldOfView;
 	float	lScreenAspect;
@@ -285,7 +287,7 @@ void	D3DInstance::InitializeMatrix(uint16_t const pWidth, uint16_t const pHeight
 	__orthoMatrix = XMMatrixOrthographicLH((float)pWidth, (float)pHeight, pScreenNear, pScreenFar);
 }
 
-void	D3DInstance::Uninitialize()
+void	D3DDevice::Uninitialize()
 {
 	if (__swapChain)
 		__swapChain->SetFullscreenState(false, nullptr);
@@ -315,7 +317,7 @@ void	D3DInstance::Uninitialize()
 		__swapChain->Release();
 }
 
-void	D3DInstance::BeginScene(float const pRed, float const pGreen, float const pBlue, float const pAlpha)
+void	D3DDevice::BeginScene(float const pRed, float const pGreen, float const pBlue, float const pAlpha)
 {
 	float	lClearColor[4];
 
@@ -325,7 +327,7 @@ void	D3DInstance::BeginScene(float const pRed, float const pGreen, float const p
 	__deviceContext->ClearDepthStencilView(__depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-void	D3DInstance::EndScene()
+void	D3DDevice::EndScene()
 {
 	if (__vsync)
 		__swapChain->Present(1, 0);
@@ -333,33 +335,66 @@ void	D3DInstance::EndScene()
 		__swapChain->Present(0, 0);
 }
 
-ID3D11Device*	D3DInstance::GetDevice() const
+ID3D11Device*	D3DDevice::GetDevice() const
 {
 	return __device;
 }
 
-ID3D11DeviceContext*	D3DInstance::GetDeviceContext() const
+ID3D11DeviceContext*	D3DDevice::GetDeviceContext() const
 {
 	return __deviceContext;
 }
 
-void	D3DInstance::GetProjectionMatrix(XMMATRIX& pProjMatrix) const
+void	D3DDevice::GetProjectionMatrix(XMMATRIX& pProjMatrix) const
 {
 	pProjMatrix = __projectionMatrix;
 }
 
-void	D3DInstance::GetWorldMatrix(XMMATRIX& pWorldMatrix) const
+void	D3DDevice::GetWorldMatrix(XMMATRIX& pWorldMatrix) const
 {
 	pWorldMatrix = __worldMatrix;
 }
 
-void	D3DInstance::GetOrthoMatrix(XMMATRIX& pOrthoMatrix) const
+void	D3DDevice::GetOrthoMatrix(XMMATRIX& pOrthoMatrix) const
 {
 	pOrthoMatrix = __orthoMatrix;
 }
 
-void	D3DInstance::GetVideoCardInfo(char* pCardName, int& pMemory) const
+void	D3DDevice::GetVideoCardInfo(char* pCardName, int& pMemory) const
 {
 	strcpy_s(pCardName, 128, __videoCardDescription);
 	pMemory = __videoCardMemory;
+}
+
+bool	CreateBuffer(ID3D11Buffer** pBuffer, UINT const pBytesWidth, D3D11_USAGE const pUsage, UINT const pBindFlags, UINT const pCPUAccessFlags, UINT const pMiscFlags, UINT const pStructueBytesStride, void const* pData, UINT const pDataMemPitch, UINT const pDataMemSlicePitch)
+{
+	HRESULT					lResult;
+	D3D11_BUFFER_DESC		lBufferDesc;
+	D3D11_SUBRESOURCE_DATA	lBufferData;
+
+	lBufferDesc.ByteWidth = pBytesWidth;
+	lBufferDesc.Usage = pUsage;
+	lBufferDesc.BindFlags = pBindFlags;
+	lBufferDesc.CPUAccessFlags = pCPUAccessFlags;
+	lBufferDesc.MiscFlags = pMiscFlags;
+	lBufferDesc.StructureByteStride = pStructueBytesStride;
+
+	if (pData != nullptr)
+	{
+		lBufferData.pSysMem = pData;
+		lBufferData.SysMemPitch = pDataMemPitch;
+		lBufferData.SysMemSlicePitch = pDataMemSlicePitch;
+
+		lResult = D3DInst->GetDevice()->CreateBuffer(&lBufferDesc, &lBufferData, pBuffer);
+		if (FAILED(lResult))
+			return false;
+	}
+	else
+	{
+		lResult = D3DInst->GetDevice()->CreateBuffer(&lBufferDesc, nullptr, pBuffer);
+		if (FAILED(lResult))
+			return false;
+	}
+
+	return true;
 }

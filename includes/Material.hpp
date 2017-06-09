@@ -1,5 +1,5 @@
-#ifndef __SHADER_HPP__
-#define __SHADER_HPP__
+#ifndef __MATERIAL_HPP__
+#define __MATERIAL_HPP__
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -26,15 +26,15 @@ public:
 	~Material() = default;
 	Material&	operator=(Material const&) = delete;
 	Material&	operator=(Material&&) = delete;
-	bool	Initialize(ID3D11Device* const pDevice, HWND const pHWND);
+	bool	Initialize();
 	void	Uninitialize();
-	bool	SentToGPU(ID3D11DeviceContext* const pDeviceContext, uint32_t const pIndexCount, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjectionMatrix);
+	bool	SentToGPU(uint32_t const pIndexCount, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjectionMatrix);
 private:
-	bool	SetMatrixParameters(ID3D11DeviceContext* const pDeviceContext, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix);
-	void	OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, HWND const pHWND, WCHAR const* const pShaderFilename);
-	bool	CompileShader(WCHAR const* const pShaderFilename, char const* const pEntryPoint, char const* const pShaderTarget, ID3DBlob** pShaderBuffer, HWND const pHWND);
-	bool	InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* const pVertexShader);
-	bool	InitializeMatrixBuffer(ID3D11Device* const pDevice);
+	bool	SetMatrixParameters(XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix);
+	void	OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, WCHAR const* const pShaderFilename);
+	bool	CompileShader(WCHAR const* const pShaderFilename, char const* const pEntryPoint, char const* const pShaderTarget, ID3DBlob** pShaderBuffer);
+	bool	InitializeVertexInputData(ID3DBlob* const pVertexShader);
+	bool	InitializeMatrixBuffer();
 private:
 	ID3D11VertexShader*	__vertexShader;
 	ID3D11PixelShader*	__pixelShader;

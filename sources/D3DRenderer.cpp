@@ -1,15 +1,15 @@
-#include "../includes/GraphicsWrapper.hpp"
+#include "../includes/D3DRenderer.hpp"
 #include "../includes/Window.hpp"
 
 bool const	VSYNC_ENABLED = true;
 float const	SCREEN_FAR = 1000.0f;
 float const	SCREEN_NEAR = 0.1f;
 
-bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, HWND const pHWND, eWindowMode const pWNDMode)
+bool	D3DRenderer::Initialize(uint16_t const pWidth, uint16_t const pHeight, HWND const pHWND, eWindowMode const pWNDMode)
 {
 	bool	lWNDMode = (pWNDMode == FULL_SCREEN);
 
-	__D3DInstance = std::unique_ptr<D3DInstance>(new (std::nothrow) D3DInstance);
+	__D3DInstance = std::unique_ptr<D3DDevice>(new (std::nothrow) D3DDevice);
 	if (__D3DInstance.get() == nullptr)
 		return false;
 	if (!__D3DInstance->Initialize(pWidth, pHeight, VSYNC_ENABLED, pHWND, lWNDMode, SCREEN_FAR, SCREEN_NEAR))
@@ -26,7 +26,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 	__mesh = std::unique_ptr<Mesh>(new (std::nothrow) Mesh);
 	if (__mesh.get() == nullptr)
 		return false;
-	if (!__mesh->Initialize(__D3DInstance->GetDevice()))
+	if (!__mesh->Initialize())
 	{
 		MessageBox(pHWND, L"Could not initialize Model", L"Error", MB_OK);
 		return false;
@@ -35,7 +35,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 	__material = std::unique_ptr<Material>(new (std::nothrow) Material);
 	if (__material.get() == nullptr)
 		return false;
-	if (!__material->Initialize(__D3DInstance->GetDevice(), pHWND))
+	if (!__material->Initialize())
 	{
 		MessageBox(pHWND, L"Could not initialize Shader", L"Error", MB_OK);
 		return false;
@@ -44,7 +44,7 @@ bool	GraphicsWrapper::Initialize(uint16_t const pWidth, uint16_t const pHeight, 
 	return true;
 }
 
-void	GraphicsWrapper::Uninitialize()
+void	D3DRenderer::Uninitialize()
 {
 	if (__mesh.get() != nullptr)
 		__mesh->Uninitialize();
@@ -56,7 +56,7 @@ void	GraphicsWrapper::Uninitialize()
 		__D3DInstance->Uninitialize();
 }
 
-bool	GraphicsWrapper::Render()
+bool	D3DRenderer::Render()
 {
 	XMMATRIX	lWorldMatrix;
 	XMMATRIX	lViewMatrix;
@@ -72,9 +72,9 @@ bool	GraphicsWrapper::Render()
 
 	SceneObject lsp(__mesh.get(), __material.get());
 
-	__mesh->SentToGPU(__D3DInstance->GetDeviceContext());
+	__mesh->SentToGPU();
 
-	if (!__material->SentToGPU(__D3DInstance->GetDeviceContext(), __mesh->GetIndexCount(), lWorldMatrix, lViewMatrix, lProjMatrix))
+	if (!__material->SentToGPU(__mesh->GetIndexCount(), lWorldMatrix, lViewMatrix, lProjMatrix))
 		return false;
 
 	__D3DInstance->EndScene();

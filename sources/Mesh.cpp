@@ -1,6 +1,6 @@
 #include "../includes/Mesh.hpp"
-#include "../includes/D3DWrapper.hpp"
 #include "../includes/tiny_obj_loader.h"
+#include "../includes/D3DFunctionalities.hpp"
 
 Mesh::Mesh() :
 	__vertexBuffer{ nullptr },
@@ -11,7 +11,7 @@ Mesh::Mesh() :
 
 }
 
-bool	Mesh::Initialize(ID3D11Device* const pDevice)
+bool	Mesh::Initialize()
 {
 	VertexData*	lVertices = nullptr;
 	uint32_t*	lIndices = nullptr;
@@ -19,7 +19,7 @@ bool	Mesh::Initialize(ID3D11Device* const pDevice)
 	if (!InitializeVertexData(&lVertices, &lIndices))
 		return false;
 
-	if (!InitializeBuffers(pDevice, lVertices, lIndices))
+	if (!InitializeBuffers(lVertices, lIndices))
 	{
 		delete[] lVertices;
 		delete[] lIndices;
@@ -82,12 +82,12 @@ bool	Mesh::InitializeVertexData(VertexData** pVertices, uint32_t** pIndices)
 	return true;
 }
 
-bool	Mesh::InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint32_t const* pIndices)
+bool	Mesh::InitializeBuffers(VertexData const* pVertices, uint32_t const* pIndices)
 {
-	if (!CreateBuffer(pDevice, &__vertexBuffer, sizeof(VertexData) * __vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, pVertices, 0, 0))
+	if (!CreateBuffer(&__vertexBuffer, sizeof(VertexData) * __vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, pVertices, 0, 0))
 		return false;
 
-	if (!CreateBuffer(pDevice, &__indexBuffer, sizeof(uint32_t) * __indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, 0, pIndices, 0, 0))
+	if (!CreateBuffer(&__indexBuffer, sizeof(uint32_t) * __indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, 0, pIndices, 0, 0))
 		return false;
 
 	return true;
@@ -102,16 +102,16 @@ void	Mesh::Uninitialize()
 		__indexBuffer->Release();
 }
 
-void	Mesh::SentToGPU(ID3D11DeviceContext* const pDeviceContext)
+void	Mesh::SentToGPU()
 {
 	ID3D11Buffer* const lVertexBuffer = GetVertexBuffer();
 	ID3D11Buffer* const lIndexBuffer = GetIndexBuffer();
 	UINT lBufferSize = GetBufferSize();
 	UINT lOffset = 0;
 
-	pDeviceContext->IASetVertexBuffers(0, 1, &lVertexBuffer, &lBufferSize, &lOffset);
-	pDeviceContext->IASetIndexBuffer(lIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3DInst->GetDeviceContext()->IASetVertexBuffers(0, 1, &lVertexBuffer, &lBufferSize, &lOffset);
+	D3DInst->GetDeviceContext()->IASetIndexBuffer(lIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	D3DInst->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 uint32_t	Mesh::GetIndexCount() const

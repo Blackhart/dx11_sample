@@ -1,5 +1,5 @@
-#ifndef __SAMPLE_ENGINE_HPP__
-#define __SAMPLE_ENGINE_HPP__
+#ifndef __WINDOW_HPP__
+#define __WINDOW_HPP__
 
 #define WIN32_LEAN_AND_MEAN
 
@@ -7,7 +7,6 @@
 #include <cstdint>
 #include <memory>
 #include <new>
-#include "GraphicsWrapper.hpp"
 #include "InputWrapper.hpp"
 
 enum eWindowMode
@@ -47,8 +46,8 @@ private:
 	uint16_t							__windowHeight;
 };
 
-static LRESULT	CALLBACK	WndProc(HWND const hwnd, UINT const umessage, WPARAM const wparam, LPARAM const lparam);
+extern Window*	WindowInst;
 
-static Window*	WindowInst = nullptr;
+extern LRESULT	CALLBACK	WndProc(HWND const hwnd, UINT const umessage, WPARAM const wparam, LPARAM const lparam);
 
 #endif

@@ -1,5 +1,6 @@
 #include "../includes/Material.hpp"
-#include "../includes/D3DWrapper.hpp"
+#include "../includes/D3DFunctionalities.hpp"
+#include "../includes/Window.hpp"
 
 Material::Material() :
 	__vertexShader{ nullptr },
@@ -10,30 +11,30 @@ Material::Material() :
 
 }
 
-bool	Material::Initialize(ID3D11Device* const pDevice, HWND const pHWND)
+bool	Material::Initialize()
 {
 	HRESULT		lResult;
 	ID3DBlob*	lVertexShader = nullptr;
 	ID3DBlob*	lPixelShader = nullptr;
 
 	// Compile Vertex + Pixel shaders
-	if (!CompileShader(L"VertexShader.hlsl", "vert", "vs_5_0", &lVertexShader, pHWND))
+	if (!CompileShader(L"VertexShader.hlsl", "vert", "vs_5_0", &lVertexShader))
 		return false;
-	if (!CompileShader(L"PixelShader.hlsl", "frag", "ps_5_0", &lPixelShader, pHWND))
+	if (!CompileShader(L"PixelShader.hlsl", "frag", "ps_5_0", &lPixelShader))
 	{
 		lVertexShader->Release();
 		return false;
 	}
 
 	// Create Vertex + Pixel object
-	lResult = pDevice->CreateVertexShader(lVertexShader->GetBufferPointer(), lVertexShader->GetBufferSize(), nullptr, &__vertexShader);
+	lResult = D3DInst->GetDevice()->CreateVertexShader(lVertexShader->GetBufferPointer(), lVertexShader->GetBufferSize(), nullptr, &__vertexShader);
 	if (FAILED(lResult))
 	{
 		lVertexShader->Release(); 
 		lPixelShader->Release(); 
 		return false;
 	}
-	lResult = pDevice->CreatePixelShader(lPixelShader->GetBufferPointer(), lPixelShader->GetBufferSize(), nullptr, &__pixelShader);
+	lResult = D3DInst->GetDevice()->CreatePixelShader(lPixelShader->GetBufferPointer(), lPixelShader->GetBufferSize(), nullptr, &__pixelShader);
 	if (FAILED(lResult))
 	{
 		lVertexShader->Release();
@@ -42,7 +43,7 @@ bool	Material::Initialize(ID3D11Device* const pDevice, HWND const pHWND)
 	}
 
 	// Add info about data being sent to the shader
-	if (!InitializeVertexInputData(pDevice, lVertexShader))
+	if (!InitializeVertexInputData(lVertexShader))
 	{
 		lVertexShader->Release();
 		lPixelShader->Release();
@@ -52,13 +53,13 @@ bool	Material::Initialize(ID3D11Device* const pDevice, HWND const pHWND)
 	lVertexShader->Release();
 	lPixelShader->Release();
 
-	if (!InitializeMatrixBuffer(pDevice))
+	if (!InitializeMatrixBuffer())
 		return false;
 
 	return true;
 }
 
-bool	Material::CompileShader(WCHAR const* const pShaderFilename, char const* const pEntryPoint, char const* const pShaderTarget, ID3DBlob** pShaderBuffer, HWND const pHWND)
+bool	Material::CompileShader(WCHAR const* const pShaderFilename, char const* const pEntryPoint, char const* const pShaderTarget, ID3DBlob** pShaderBuffer)
 {
 	HRESULT		lResult;
 	ID3DBlob*	lErrorMsg = nullptr;
@@ -67,15 +68,15 @@ bool	Material::CompileShader(WCHAR const* const pShaderFilename, char const* con
 	if (FAILED(lResult))
 	{
 		if (lErrorMsg)
-			OutputShaderErrorMessage(lErrorMsg, pHWND, pShaderFilename);
+			OutputShaderErrorMessage(lErrorMsg, pShaderFilename);
 		else
-			MessageBox(pHWND, pShaderFilename, L"Missing Shader File", MB_OK);
+			MessageBox(WindowInst->GetWindow(), pShaderFilename, L"Missing Shader File", MB_OK);
 		return false;
 	}
 	return true;
 }
 
-bool	Material::InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* const pVertexShader)
+bool	Material::InitializeVertexInputData(ID3DBlob* const pVertexShader)
 {
 	HRESULT						lResult;
 	D3D11_INPUT_ELEMENT_DESC	lPolygonLayout[3];
@@ -107,16 +108,16 @@ bool	Material::InitializeVertexInputData(ID3D11Device* const pDevice, ID3DBlob* 
 
 	lNumElems = sizeof(lPolygonLayout) / sizeof(lPolygonLayout[0]);
 
-	lResult = pDevice->CreateInputLayout(lPolygonLayout, lNumElems, pVertexShader->GetBufferPointer(), pVertexShader->GetBufferSize(), &__inputLayout);
+	lResult = D3DInst->GetDevice()->CreateInputLayout(lPolygonLayout, lNumElems, pVertexShader->GetBufferPointer(), pVertexShader->GetBufferSize(), &__inputLayout);
 	if (FAILED(lResult))
 		return false;
 
 	return true;
 }
 
-bool	Material::InitializeMatrixBuffer(ID3D11Device* const pDevice)
+bool	Material::InitializeMatrixBuffer()
 {
-	return CreateBuffer(pDevice, &__matrixBuffer, sizeof(MatrixBuffer), D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0, nullptr, 0, 0);
+	return CreateBuffer(&__matrixBuffer, sizeof(MatrixBuffer), D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0, nullptr, 0, 0);
 }
 
 void	Material::Uninitialize()
@@ -134,7 +135,7 @@ void	Material::Uninitialize()
 		__vertexShader->Release();
 }
 
-void	Material::OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, HWND const pHWND, WCHAR const* const pShaderFilename)
+void	Material::OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, WCHAR const* const pShaderFilename)
 {
 	char*			lErrors = nullptr;
 	std::ofstream	lStreamOut;
@@ -144,31 +145,31 @@ void	Material::OutputShaderErrorMessage(ID3D10Blob* const pErrorMsg, HWND const 
 	lStreamOut << lErrors;
 	lStreamOut.close();
 	pErrorMsg->Release();
-	MessageBox(pHWND, L"Error compiling shader. Take a look to Log.txt!", pShaderFilename, MB_OK);
+	MessageBox(WindowInst->GetWindow(), L"Error compiling shader. Take a look to Log.txt!", pShaderFilename, MB_OK);
 }
 
-bool	Material::SentToGPU(ID3D11DeviceContext* const pDeviceContext, uint32_t const pIndexCount, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjectionMatrix)
+bool	Material::SentToGPU(uint32_t const pIndexCount, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjectionMatrix)
 {
-	if (!SetMatrixParameters(pDeviceContext, pWorldMatrix, pViewMatrix, pProjectionMatrix))
+	if (!SetMatrixParameters(pWorldMatrix, pViewMatrix, pProjectionMatrix))
 		return false;
 
-	pDeviceContext->IASetInputLayout(__inputLayout);
+	D3DInst->GetDeviceContext()->IASetInputLayout(__inputLayout);
 
-	pDeviceContext->VSSetShader(__vertexShader, nullptr, 0);
-	pDeviceContext->PSSetShader(__pixelShader, nullptr, 0);
+	D3DInst->GetDeviceContext()->VSSetShader(__vertexShader, nullptr, 0);
+	D3DInst->GetDeviceContext()->PSSetShader(__pixelShader, nullptr, 0);
 
-	pDeviceContext->DrawIndexed(pIndexCount, 0, 0);
+	D3DInst->GetDeviceContext()->DrawIndexed(pIndexCount, 0, 0);
 
 	return true;
 }
 
-bool	Material::SetMatrixParameters(ID3D11DeviceContext* const pDeviceContext, XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix)
+bool	Material::SetMatrixParameters(XMMATRIX const pWorldMatrix, XMMATRIX const pViewMatrix, XMMATRIX const pProjMatrix)
 {
 	HRESULT						lResult;
 	D3D11_MAPPED_SUBRESOURCE	lMappedResource;
 	MatrixBuffer*				lMatrixBuffer = nullptr;
 
-	lResult = pDeviceContext->Map(__matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &lMappedResource);
+	lResult = D3DInst->GetDeviceContext()->Map(__matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &lMappedResource);
 	if (FAILED(lResult))
 		return false;
 
@@ -177,9 +178,9 @@ bool	Material::SetMatrixParameters(ID3D11DeviceContext* const pDeviceContext, XM
 	lMatrixBuffer->view = XMMatrixTranspose(pViewMatrix);
 	lMatrixBuffer->projection = XMMatrixTranspose(pProjMatrix);
 
-	pDeviceContext->Unmap(__matrixBuffer, 0);
+	D3DInst->GetDeviceContext()->Unmap(__matrixBuffer, 0);
 
-	pDeviceContext->VSSetConstantBuffers(0, 1, &__matrixBuffer);
+	D3DInst->GetDeviceContext()->VSSetConstantBuffers(0, 1, &__matrixBuffer);
 
 	return true;
 }

@@ -1,5 +1,5 @@
-#ifndef __MODEL_HPP__
-#define __MODEL_HPP__
+#ifndef __MESH_HPP__
+#define __MESH_HPP__
 
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -25,9 +25,9 @@ public:
 	~Mesh() = default;
 	Mesh&						operator=(Mesh const&) = delete;
 	Mesh&						operator=(Mesh&&) = delete;
-	bool						Initialize(ID3D11Device* const pDevice);
+	bool						Initialize();
 	void						Uninitialize();
-	void						SentToGPU(ID3D11DeviceContext* const pDeviceContext);
+	void						SentToGPU();
 	uint32_t					GetIndexCount() const;
 	uint32_t					GetVertexCount() const;
 	ID3D11Buffer const* const	GetConstVertexBuffer() const;
@@ -37,7 +37,7 @@ public:
 	uint32_t					GetBufferSize() const;
 private:
 	bool	InitializeVertexData(VertexData** pVertices, uint32_t** pIndices);
-	bool	InitializeBuffers(ID3D11Device* const pDevice, VertexData const* pVertices, uint32_t const* pIndices);
+	bool	InitializeBuffers(VertexData const* pVertices, uint32_t const* pIndices);
 private:
 	ID3D11Buffer*	__vertexBuffer;
 	ID3D11Buffer*	__indexBuffer;
