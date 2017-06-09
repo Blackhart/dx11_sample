@@ -15,7 +15,6 @@ public:
 	InputWrapper&	operator=(InputWrapper const&) = delete;
 	InputWrapper&	operator=(InputWrapper&&) = delete;
 	void	Initialize();
-	void	Uninitialize();
 	void	KeyDown(uint8_t const);
 	void	KeyUp(uint8_t const);
 	bool	IsKeyDown(uint8_t const) const;

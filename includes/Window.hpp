@@ -17,34 +17,38 @@ enum eWindowMode
 };
 typedef eWindowMode	WindowMode;
 
-class SampleEngine
+class Window
 {
 public:
-	SampleEngine() = default;
-	SampleEngine(SampleEngine const&) = delete;
-	SampleEngine(SampleEngine&&) = delete;
-	~SampleEngine() = default;
-	SampleEngine&	operator=(SampleEngine const&) = delete;
-	SampleEngine&	operator=(SampleEngine&&) = delete;
-	bool	Initialize();
-	void	Uninitialize();
-	void	Run();
-	LRESULT CALLBACK MessageHandler(HWND const hwnd, UINT const umsg, WPARAM const wparam, LPARAM const lparam);
+	Window();
+	Window(Window const&) = delete;
+	Window(Window&&) = delete;
+	~Window() = default;
+	Window&		operator=(Window const&) = delete;
+	Window&		operator=(Window&&) = delete;
+	bool				Initialize();
+	void				Uninitialize();
+	bool				Run();
+	uint16_t			GetWindowWidth() const;
+	uint16_t			GetWindowHeight() const;
+	HWND				GetWindow() const;
+	WindowMode			GetWindowMode() const;
+	LRESULT CALLBACK	MessageHandler(HWND const hwnd, UINT const umsg, WPARAM const wparam, LPARAM const lparam);
 private:
-	bool	Render();
-	void	InitializeWindows(uint16_t& pWidth, uint16_t& pHeight);
+	void	InitializeWindows();
 	void	UninitializeWindows();
 private:
 	LPCWSTR								__appName;
 	HINSTANCE							__hinstance;
 	HWND								__hwnd;
 	std::unique_ptr<InputWrapper>		__input;
-	std::unique_ptr<GraphicsWrapper>	__graphics;
 	WindowMode							__windowMode;
+	uint16_t							__windowWidth;
+	uint16_t							__windowHeight;
 };
 
 static LRESULT	CALLBACK	WndProc(HWND const hwnd, UINT const umessage, WPARAM const wparam, LPARAM const lparam);
 
-static SampleEngine*	SampleEngineInst = nullptr;
+static Window*	WindowInst = nullptr;
 
 #endif

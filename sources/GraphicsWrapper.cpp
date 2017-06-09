@@ -1,5 +1,5 @@
 #include "../includes/GraphicsWrapper.hpp"
-#include "../includes/SampleEngine.hpp"
+#include "../includes/Window.hpp"
 
 bool const	VSYNC_ENABLED = true;
 float const	SCREEN_FAR = 1000.0f;

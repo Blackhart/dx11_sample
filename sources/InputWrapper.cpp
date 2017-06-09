@@ -8,11 +8,6 @@ void	InputWrapper::Initialize()
 		__keys[i] = false;
 }
 
-void	InputWrapper::Uninitialize()
-{
-
-}
-
 void	InputWrapper::KeyDown(uint8_t const input)
 {
 	if (input < __MAX_INPUT__)

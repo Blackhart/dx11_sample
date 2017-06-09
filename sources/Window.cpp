@@ -1,71 +1,49 @@
-#include "../includes/SampleEngine.hpp"
+#include "../includes/Window.hpp"
 
-bool	SampleEngine::Initialize()
+Window::Window() :
+	__windowWidth{ 0 },
+	__windowHeight{ 0 }
 {
-	uint16_t	lWidth = 0;
-	uint16_t	lHeight = 0;
 
-	InitializeWindows(lWidth, lHeight);
+}
 
+bool	Window::Initialize()
+{
 	__input = std::unique_ptr<InputWrapper>(new (std::nothrow) InputWrapper{});
 	if (__input.get() == nullptr)
 		return false;
 
+	InitializeWindows();
+
 	__input->Initialize();
-
-	__graphics = std::unique_ptr<GraphicsWrapper>(new (std::nothrow) GraphicsWrapper{});
-	if (__graphics.get() == nullptr)
-		return false;
-
-	if (!__graphics->Initialize(lWidth, lHeight, __hwnd, __windowMode))
-		return false;
 
 	return true;
 }
 
-void	SampleEngine::Uninitialize()
+void	Window::Uninitialize()
 {
-	if (__input.get() != nullptr)
-		__input->Uninitialize();
-
-	if (__input.get() != nullptr)
-		__graphics->Uninitialize();
-
 	UninitializeWindows();
 }
 
-void	SampleEngine::Run()
+bool	Window::Run()
 {
 	MSG	lMsg;
 
 	ZeroMemory(&lMsg, sizeof(MSG));
-	while (true)
+	if (PeekMessage(&lMsg, nullptr, 0, 0, PM_REMOVE))
 	{
-		if (PeekMessage(&lMsg, nullptr, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&lMsg);
-			DispatchMessage(&lMsg);
-		}
-
-		if (lMsg.message == WM_QUIT)
-			break;
-		else if (!Render())
-			break;
+		TranslateMessage(&lMsg);
+		DispatchMessage(&lMsg);
 	}
-}
 
-bool	SampleEngine::Render()
-{
-	if (__input->IsKeyDown(VK_ESCAPE))
+	if (lMsg.message == WM_QUIT)
 		return false;
-
-	if (!__graphics->Render())
+	else if (__input->IsKeyDown(VK_ESCAPE))
 		return false;
-
 	return true;
 }
 
-LRESULT CALLBACK SampleEngine::MessageHandler(HWND const hwnd, UINT const umsg, WPARAM const wparam, LPARAM const lparam)
+LRESULT CALLBACK Window::MessageHandler(HWND const hwnd, UINT const umsg, WPARAM const wparam, LPARAM const lparam)
 {
 	switch (umsg)
 	{
@@ -87,14 +65,14 @@ LRESULT CALLBACK SampleEngine::MessageHandler(HWND const hwnd, UINT const umsg, 
 	}
 }
 
-void	SampleEngine::InitializeWindows(uint16_t& pWidth, uint16_t& pHeight)
+void	Window::InitializeWindows()
 {
 	WNDCLASSEX	lWNDCLASSEX;
 	DEVMODE		lDEVMODE;
 	uint16_t	posx = 0;
 	uint16_t	posy = 0;
 
-	SampleEngineInst = this;
+	WindowInst = this;
 
 	__hinstance = GetModuleHandle(nullptr);
 	__appName = L"Sample Engine";
@@ -114,15 +92,15 @@ void	SampleEngine::InitializeWindows(uint16_t& pWidth, uint16_t& pHeight)
 
 	RegisterClassEx(&lWNDCLASSEX);
 
-	pWidth = GetSystemMetrics(SM_CXSCREEN);
-	pHeight = GetSystemMetrics(SM_CYSCREEN);
+	__windowWidth = GetSystemMetrics(SM_CXSCREEN);
+	__windowHeight = GetSystemMetrics(SM_CYSCREEN);
 
 	if (__windowMode == FULL_SCREEN)
 	{
 		memset(&lDEVMODE, 0, sizeof(lDEVMODE));
 		lDEVMODE.dmSize = sizeof(lDEVMODE);
-		lDEVMODE.dmPelsWidth = (unsigned long)pWidth;
-		lDEVMODE.dmPelsHeight = (unsigned long)pHeight;
+		lDEVMODE.dmPelsWidth = (unsigned long)__windowWidth;
+		lDEVMODE.dmPelsHeight = (unsigned long)__windowHeight;
 		lDEVMODE.dmBitsPerPel = 32;
 		lDEVMODE.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
@@ -133,14 +111,14 @@ void	SampleEngine::InitializeWindows(uint16_t& pWidth, uint16_t& pHeight)
 	}
 	else
 	{
-		pWidth = 800;
-		pHeight = 600;
+		__windowWidth = 800;
+		__windowHeight = 600;
 
-		posx = (GetSystemMetrics(SM_CXSCREEN) - pWidth) / 2;
-		posy = (GetSystemMetrics(SM_CYSCREEN) - pHeight) / 2;
+		posx = (GetSystemMetrics(SM_CXSCREEN) - __windowWidth) / 2;
+		posy = (GetSystemMetrics(SM_CYSCREEN) - __windowHeight) / 2;
 	}
 
-	__hwnd = CreateWindowEx(WS_EX_APPWINDOW, __appName, __appName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP, posx, posy, pWidth, pHeight, NULL, NULL, __hinstance, NULL);
+	__hwnd = CreateWindowEx(WS_EX_APPWINDOW, __appName, __appName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP, posx, posy, __windowWidth, __windowHeight, NULL, NULL, __hinstance, NULL);
 
 	ShowWindow(__hwnd, SW_SHOW);
 	SetForegroundWindow(__hwnd);
@@ -148,7 +126,7 @@ void	SampleEngine::InitializeWindows(uint16_t& pWidth, uint16_t& pHeight)
 	ShowCursor(false);
 }
 
-void	SampleEngine::UninitializeWindows()
+void	Window::UninitializeWindows()
 {
 	ShowCursor(true);
 
@@ -179,7 +157,27 @@ LRESULT CALLBACK WndProc(HWND const hwnd, UINT const umessage, WPARAM const wpar
 		}
 		default:
 		{
-			return SampleEngineInst->MessageHandler(hwnd, umessage, wparam, lparam);
+			return WindowInst->MessageHandler(hwnd, umessage, wparam, lparam);
 		}
 	}
+}
+
+uint16_t	Window::GetWindowWidth() const
+{
+	return __windowWidth;
+}
+
+uint16_t	Window::GetWindowHeight() const
+{
+	return __windowHeight;
+}
+
+HWND	Window::GetWindow() const
+{
+	return __hwnd;
+}
+
+WindowMode	Window::GetWindowMode() const
+{
+	return __windowMode;
 }

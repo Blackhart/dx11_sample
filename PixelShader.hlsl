@@ -58,7 +58,7 @@ void	frag(in fragInput pIN, out fragOutput pOUT)
 	
 	// ~~~~~ OUTPUT ~~~~~
 	
-	pOUT.Color = half4(L0, 1.0);
+	pOUT.Color = half4(L0.r, L0.g, L0.b, 1.0);
 }
 
 inline float	NDF_Trowbridge_Reitz_GGX(float NdotH, float roughness)

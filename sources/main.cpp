@@ -1,14 +1,16 @@
-#include "../includes/SampleEngine.hpp"
+#include "../includes/Window.hpp"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
-	SampleEngine lEngine;
-	if (!lEngine.Initialize())
-	{
-		lEngine.Uninitialize();
+	Window lWindow;
+	if (!lWindow.Initialize())
 		return false;
+
+	while (lWindow.Run())
+	{
+
 	}
-	lEngine.Run();
-	lEngine.Uninitialize();
+
+	lWindow.Uninitialize();
 	return true;
 }
