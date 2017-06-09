@@ -158,8 +158,6 @@ bool	Material::SentToGPU(uint32_t const pIndexCount, XMMATRIX const pWorldMatrix
 	D3DInst->GetDeviceContext()->VSSetShader(__vertexShader, nullptr, 0);
 	D3DInst->GetDeviceContext()->PSSetShader(__pixelShader, nullptr, 0);
 
-	D3DInst->GetDeviceContext()->DrawIndexed(pIndexCount, 0, 0);
-
 	return true;
 }
 

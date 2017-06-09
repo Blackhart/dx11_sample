@@ -26,15 +26,12 @@ public:
 	~D3DDevice() = default;
 	D3DDevice&	operator=(D3DDevice const&) = delete;
 	D3DDevice&	operator=(D3DDevice&&) = delete;
-	bool					Initialize(uint16_t const pWidth, uint16_t const pHeight, bool const pVSync, HWND const pHWND, bool const pFullScreen, float const pScreenFar, float const pScreenNear);
+	bool					Initialize(uint16_t const pWidth, uint16_t const pHeight, bool const pVSync, HWND const pHWND, bool const pFullScreen);
 	void					Uninitialize();
 	void					BeginScene(float const pRed, float const pGreen, float const pBlue, float const pAlpha);
 	void					EndScene();
 	ID3D11Device*			GetDevice() const;
 	ID3D11DeviceContext*	GetDeviceContext() const;
-	void					GetProjectionMatrix(XMMATRIX& pProjMatrix) const;
-	void					GetWorldMatrix(XMMATRIX& pWorldMatrix) const;
-	void					GetOrthoMatrix(XMMATRIX& pOrthoMatrix) const;
 	void					GetVideoCardInfo(char* pCardName, int& pMemory) const;
 private:
 	bool					GetDeviceInfo(uint16_t const pWidth, uint16_t const pHeight, uint32_t& pFreshRateNum, uint32_t& pFreshRateDenom, uint64_t& pVideoCardNameLength);
@@ -43,7 +40,6 @@ private:
 	bool					InitializeDepthBuffer(uint16_t const pWidth, uint16_t const pHeight);
 	bool					InitializeRasterizer();
 	void					InitializeViewport(uint16_t const pWidth, uint16_t const pHeight);
-	void					InitializeMatrix(uint16_t const pWidth, uint16_t const pHeight, float const pScreenFar, float const pScreenNear);
 private:
 	bool						__vsync;
 	int32_t						__videoCardMemory;
@@ -56,9 +52,6 @@ private:
 	ID3D11DepthStencilState*	__depthStencilState;
 	ID3D11DepthStencilView*		__depthStencilView;
 	ID3D11RasterizerState*		__rasterState;
-	XMMATRIX					__projectionMatrix;
-	XMMATRIX					__worldMatrix;
-	XMMATRIX					__orthoMatrix;
 };
 
 extern D3DDevice*	D3DInst;

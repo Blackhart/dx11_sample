@@ -1,10 +1,17 @@
 #include "../includes/Camera.hpp"
+#include "../includes/Window.hpp"
+#include "../includes/D3DFunctionalities.hpp"
 
-Camera::Camera()
+Camera::Camera(float const pNear, float const pFar)
 {
+	float	lFieldOfView = 3.141592654f / 4.0f;
+	float	lScreenAspect = (float)WindowInst->GetWindowWidth() / (float)WindowInst->GetWindowHeight();
+
 	SetPosition(0.0f, 0.0f, 0.0f);
 	SetRotation(0.0f, 0.0f, 0.0f);
+
 	__viewMatrix = XMMatrixIdentity();
+	__projMatrix = XMMatrixPerspectiveFovLH(lFieldOfView, lScreenAspect, pNear, pFar);
 }
 
 void	Camera::SetPosition(float const x, float const y, float const z)
@@ -31,7 +38,20 @@ XMFLOAT3	Camera::GetRotation() const
 	return __rotation;
 }
 
-void	Camera::Render()
+bool	Camera::Render(Mesh& pMesh, Material& pMaterial)
+{
+	UpdateViewMatrix();
+
+	pMesh.SentToGPU();
+	if (!pMaterial.SentToGPU(pMesh.GetIndexCount(), XMMatrixIdentity(), __viewMatrix, __projMatrix))
+		return false;
+
+	D3DInst->GetDeviceContext()->DrawIndexed(pMesh.GetIndexCount(), 0, 0);
+
+	return true;
+}
+
+void	Camera::UpdateViewMatrix()
 {
 	XMVECTOR	lUpSIMDVector;
 	XMVECTOR	lPositionSIMDVector;

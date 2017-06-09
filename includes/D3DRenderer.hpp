@@ -12,8 +12,6 @@
 #include "SceneObject.hpp"
 
 extern bool const	VSYNC_ENABLED;
-extern float const	SCREEN_FAR;
-extern float const	SCREEN_NEAR;
 
 enum eWindowMode;
 
@@ -30,7 +28,7 @@ public:
 	void	Uninitialize();
 	bool	Render();
 private:
-	std::unique_ptr<D3DDevice>		__D3DInstance;
+	std::unique_ptr<D3DDevice>		__D3DDevice;
 	std::unique_ptr<Camera>			__camera;
 	std::unique_ptr<Mesh>			__mesh;
 	std::unique_ptr<Material>		__material;

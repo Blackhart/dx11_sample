@@ -15,7 +15,7 @@ D3DDevice::D3DDevice() :
 	D3DInst = this;
 }
 
-bool	D3DDevice::Initialize(uint16_t const pWidth, uint16_t const pHeight, bool const pVSync, HWND const pHWND, bool const pFullScreen, float const pScreenFar, float const pScreenNear)
+bool	D3DDevice::Initialize(uint16_t const pWidth, uint16_t const pHeight, bool const pVSync, HWND const pHWND, bool const pFullScreen)
 {
 	uint32_t	lFreshRateNum;
 	uint32_t	lFreshRateDenom;
@@ -39,8 +39,6 @@ bool	D3DDevice::Initialize(uint16_t const pWidth, uint16_t const pHeight, bool c
 		return false;
 
 	InitializeViewport(pWidth, pHeight);
-
-	InitializeMatrix(pWidth, pHeight, pScreenFar, pScreenNear);
 
 	return true;
 }
@@ -274,19 +272,6 @@ void	D3DDevice::InitializeViewport(uint16_t const pWidth, uint16_t const pHeight
 	__deviceContext->RSSetViewports(1, &lViewport);
 }
 
-void	D3DDevice::InitializeMatrix(uint16_t const pWidth, uint16_t const pHeight, float const pScreenFar, float const pScreenNear)
-{
-	float	lFieldOfView;
-	float	lScreenAspect;
-
-	lFieldOfView = 3.141592654f / 4.0f;
-	lScreenAspect = (float)pWidth / (float)pHeight;
-
-	__projectionMatrix = XMMatrixPerspectiveFovLH(lFieldOfView, lScreenAspect, pScreenNear, pScreenFar);
-	__worldMatrix = XMMatrixIdentity();
-	__orthoMatrix = XMMatrixOrthographicLH((float)pWidth, (float)pHeight, pScreenNear, pScreenFar);
-}
-
 void	D3DDevice::Uninitialize()
 {
 	if (__swapChain)
@@ -343,21 +328,6 @@ ID3D11Device*	D3DDevice::GetDevice() const
 ID3D11DeviceContext*	D3DDevice::GetDeviceContext() const
 {
 	return __deviceContext;
-}
-
-void	D3DDevice::GetProjectionMatrix(XMMATRIX& pProjMatrix) const
-{
-	pProjMatrix = __projectionMatrix;
-}
-
-void	D3DDevice::GetWorldMatrix(XMMATRIX& pWorldMatrix) const
-{
-	pWorldMatrix = __worldMatrix;
-}
-
-void	D3DDevice::GetOrthoMatrix(XMMATRIX& pOrthoMatrix) const
-{
-	pOrthoMatrix = __orthoMatrix;
 }
 
 void	D3DDevice::GetVideoCardInfo(char* pCardName, int& pMemory) const
